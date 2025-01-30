@@ -1,6 +1,6 @@
 import java.net.URI
 
-rootProject.name = "dashboard"
+rootProject.name = "e-ink-dashboard"
 
 sourceControl {
     gitRepository(URI.create("https://github.com/schildbach/public-transport-enabler.git")) {
