@@ -18,7 +18,7 @@ class WidgetTypeRegistry {
         mutableMapOf()
     private val specTypeToControllerMap: MutableMap<KClass<out WidgetSpec>, WidgetController<*, *>> = mutableMapOf()
 
-    fun <S : WidgetSpec, D : WidgetData> registerWidgetType(
+    fun <S : WidgetSpec, D> registerWidgetType(
         specClass: KClass<S>,
         controller: WidgetController<S, D>,
         constructor: (S, WidgetController<S, D>) -> Widget
@@ -52,7 +52,7 @@ class WidgetTypeRegistry {
         }
     }
 
-    private class ErrorWidget(spec: WidgetSpec) : BaseWidget<WidgetSpec, WidgetData>(spec, WidgetController.NOOP) {
+    private class ErrorWidget(spec: WidgetSpec) : BaseWidgetWithoutController<WidgetSpec>(spec) {
 
         override fun renderInto(target: HtmlBlockTag) = with(target) {
             div {

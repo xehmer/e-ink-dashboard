@@ -6,11 +6,12 @@ import de.xehmer.dashboard.widgets.WidgetTypeRegistry
 import org.springframework.stereotype.Service
 
 @Service
-final class WeatherWidgetController(
+class WeatherWidgetController(
     widgetTypeRegistry: WidgetTypeRegistry
 ) : WidgetController<WeatherWidgetSpec, WeatherWidgetData> {
 
     init {
+        @Suppress("LeakingThis")
         widgetTypeRegistry.registerWidgetType(WeatherWidgetSpec::class, this, ::WeatherWidget)
     }
 
