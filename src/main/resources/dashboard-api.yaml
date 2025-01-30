@@ -1,0 +1,119 @@
+openapi: 3.1.0
+info:
+  title: Dashboard API
+  description: Dashboard API
+  version: 1.0.0
+servers:
+  - url: 'https://localhost:8080'
+
+paths:
+  /dashboard:
+    get:
+      operationId: getDashboard
+      parameters:
+        - in: query
+          name: spec
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+  schemas:
+    DashboardSpec:
+      type: object
+      properties:
+        displayWidth:
+          type: integer
+        displayHeight:
+          type: integer
+        gridColumnCount:
+          type: integer
+        gridRowCount:
+          type: integer
+        widgets:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/WeatherWidgetSpec"
+              - $ref: "#/components/schemas/CalendarWidgetSpec"
+      required:
+        - displayWidth
+        - displayHeight
+        - gridColumnCount
+        - gridRowCount
+        - widgets
+
+    WidgetSpec:
+      type: object
+      properties:
+        widgetType:
+          $ref: "#/components/schemas/WidgetType"
+        display:
+          $ref: "#/components/schemas/WidgetDisplaySpec"
+      required:
+        - widgetType
+        - display
+      discriminator:
+        propertyName: widgetType
+        mapping:
+          weather: "#/components/schemas/WeatherWidgetSpec"
+          calendar: "#/components/schemas/CalendarWidgetSpec"
+
+    WidgetType:
+      type: string
+      enum:
+        - weather
+        - calendar
+
+    WidgetDisplaySpec:
+      type: object
+      properties:
+        startColumn:
+          type: integer
+        columnSpan:
+          type: integer
+        startRow:
+          type: integer
+        rowSpan:
+          type: integer
+        align:
+          type: string
+        justify:
+          type: string
+      required:
+        - startColumn
+        - columnSpan
+        - startRow
+        - rowSpan
+
+    WeatherWidgetSpec:
+      allOf:
+        - $ref: "#/components/schemas/WidgetSpec"
+        - type: object
+          properties:
+            lat:
+              type: number
+              format: float
+            lon:
+              type: number
+              format: float
+          required:
+            - lat
+            - lon
+
+    CalendarWidgetSpec:
+      allOf:
+        - $ref: "#/components/schemas/WidgetSpec"
+        - type: object
+          properties:
+            calendarId:
+              type: string
+          required:
+            - calendarId

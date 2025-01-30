@@ -1,0 +1,31 @@
+{
+  "displayWidth": 1000,
+  "displayHeight": 500,
+  "gridColumnCount": 10,
+  "gridRowCount": 5,
+  "widgets": [
+    {
+      "widgetType": "weather",
+      "display": {
+        "startColumn": 8,
+        "columnSpan": 3,
+        "startRow": 2,
+        "rowSpan": 2,
+        "align": "center",
+        "justify": "center"
+      },
+      "lat": 50.91,
+      "lon": 11.56
+    },
+    {
+      "widgetType": "calendar",
+      "display": {
+        "startColumn": 1,
+        "columnSpan": 1,
+        "startRow": 1,
+        "rowSpan": 1
+      },
+      "calendarId": "test"
+    }
+  ]
+}
