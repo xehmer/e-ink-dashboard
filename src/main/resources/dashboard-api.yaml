@@ -43,6 +43,7 @@ components:
             oneOf:
               - $ref: "#/components/schemas/WeatherWidgetSpec"
               - $ref: "#/components/schemas/CalendarWidgetSpec"
+              - $ref: "#/components/schemas/JeNahWidgetSpec"
       required:
         - displayWidth
         - displayHeight
@@ -65,12 +66,14 @@ components:
         mapping:
           weather: "#/components/schemas/WeatherWidgetSpec"
           calendar: "#/components/schemas/CalendarWidgetSpec"
+          jenah: "#/components/schemas/JeNahWidgetSpec"
 
     WidgetType:
       type: string
       enum:
         - weather
         - calendar
+        - jenah
 
     WidgetDisplaySpec:
       type: object
@@ -117,3 +120,19 @@ components:
               type: string
           required:
             - calendarId
+
+    JeNahWidgetSpec:
+      allOf:
+        - $ref: "#/components/schemas/WidgetSpec"
+        - type: object
+          properties:
+            apiClient:
+              type: string
+            apiAuthorization:
+              type: string
+            station:
+              type: string
+          required:
+            - apiClient
+            - apiAuthorization
+            - station
