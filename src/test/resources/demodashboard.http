@@ -3,47 +3,52 @@ PUT http://localhost:8080/dashboard/spec
 Content-Type: application/json
 
 {
-  "displayWidth": 1000,
-  "displayHeight": 500,
-  "gridColumnCount": 10,
-  "gridRowCount": 5,
-  "widgets": [
-    {
-      "widgetType": "weather",
-      "display": {
-        "startColumn": 8,
-        "columnSpan": 3,
-        "startRow": 2,
-        "rowSpan": 2,
-        "align": "center",
-        "justify": "center"
-      },
-      "lat": 50.91,
-      "lon": 11.56
-    },
-    {
-      "widgetType": "calendar",
-      "display": {
-        "startColumn": 1,
-        "columnSpan": 1,
-        "startRow": 1,
-        "rowSpan": 1
-      },
-      "calendarId": "test"
-    },
-    {
-      "widgetType": "jenah",
-      "display": {
-        "startColumn": 2,
-        "columnSpan": 4,
-        "startRow": 1,
-        "rowSpan": 3
-      },
-      "apiClient": "{{jenahApiClient}}",
-      "apiAuthorization": "{{jenahApiAuthorization}}",
-      "station": "Zeiss-Werk"
-    }
-  ]
+	"context": {
+		"timeZone": "Europe/Berlin",
+		"locale": "de_DE"
+	},
+	"display": {
+		"width": 1000,
+		"height": 500,
+		"columnCount": 10,
+		"rowCount": 5
+	},
+	"widgets": [{
+			"widgetType": "weather",
+			"display": {
+				"startColumn": 8,
+				"columnSpan": 3,
+				"startRow": 2,
+				"rowSpan": 2,
+				"align": "center",
+				"justify": "center"
+			},
+			"lat": 50.91,
+			"lon": 11.56
+		},
+		{
+			"widgetType": "calendar",
+			"display": {
+				"startColumn": 1,
+				"columnSpan": 1,
+				"startRow": 1,
+				"rowSpan": 1
+			},
+			"calendarId": "test"
+		},
+		{
+			"widgetType": "jenah",
+			"display": {
+				"startColumn": 2,
+				"columnSpan": 4,
+				"startRow": 1,
+				"rowSpan": 3
+			},
+			"apiClient": "{{jenahApiClient}}",
+			"apiAuthorization": "{{jenahApiAuthorization}}",
+			"station": "Zeiss-Werk"
+		}
+	]
 }
 
 ### Show dashboard

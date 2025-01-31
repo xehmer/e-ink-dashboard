@@ -36,14 +36,10 @@ components:
     DashboardSpec:
       type: object
       properties:
-        displayWidth:
-          type: integer
-        displayHeight:
-          type: integer
-        gridColumnCount:
-          type: integer
-        gridRowCount:
-          type: integer
+        context:
+          $ref: "#/components/schemas/DashboardContextSpec"
+        display:
+          $ref: "#/components/schemas/DashboardDisplaySpec"
         widgets:
           type: array
           items:
@@ -52,11 +48,37 @@ components:
               - $ref: "#/components/schemas/CalendarWidgetSpec"
               - $ref: "#/components/schemas/JeNahWidgetSpec"
       required:
-        - displayWidth
-        - displayHeight
-        - gridColumnCount
-        - gridRowCount
+        - context
+        - display
         - widgets
+
+    DashboardContextSpec:
+      type: object
+      properties:
+        timeZone:
+          type: string
+        locale:
+          type: string
+      required:
+        - timeZone
+        - locale
+
+    DashboardDisplaySpec:
+      type: object
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+        columnCount:
+          type: integer
+        rowCount:
+          type: integer
+      required:
+        - width
+        - height
+        - columnCount
+        - rowCount
 
     WidgetSpec:
       type: object

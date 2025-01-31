@@ -1,6 +1,7 @@
 package de.xehmer.dashboard.widgets
 
 import de.xehmer.dashboard.api.models.WidgetSpec
+import de.xehmer.dashboard.dashboard.DashboardContext
 import de.xehmer.dashboard.utils.inlineStyle
 import kotlinx.css.*
 import kotlinx.html.HtmlBlockTag
@@ -12,47 +13,50 @@ import kotlin.reflect.KClass
 @Service
 class WidgetTypeRegistry {
 
-    private val specTypeToConstructor1Map: MutableMap<KClass<out WidgetSpec>, (WidgetSpec) -> Widget> =
+    private val specTypeToConstructor1Map: MutableMap<KClass<out WidgetSpec>, (WidgetSpec, DashboardContext) -> Widget> =
         mutableMapOf()
-    private val specTypeToConstructor2Map: MutableMap<KClass<out WidgetSpec>, (WidgetSpec, WidgetController<*, *>) -> Widget> =
+    private val specTypeToConstructor2Map: MutableMap<KClass<out WidgetSpec>, (WidgetSpec, DashboardContext, WidgetController<*, *>) -> Widget> =
         mutableMapOf()
     private val specTypeToControllerMap: MutableMap<KClass<out WidgetSpec>, WidgetController<*, *>> = mutableMapOf()
 
     fun <S : WidgetSpec, D> registerWidgetType(
         specClass: KClass<S>,
         controller: WidgetController<S, D>,
-        constructor: (S, WidgetController<S, D>) -> Widget
+        constructor: (S, DashboardContext, WidgetController<S, D>) -> Widget
     ) {
         specTypeToControllerMap[specClass] = controller
-        specTypeToConstructor2Map[specClass] = { constructorSpecParam, constructorControllerParam ->
-            @Suppress("UNCHECKED_CAST")
-            constructor.invoke(
-                constructorSpecParam as S,
-                constructorControllerParam as WidgetController<S, D>
-            )
-        }
+        specTypeToConstructor2Map[specClass] =
+            { constructorSpecParam, constructorContextParam, constructorControllerParam ->
+                @Suppress("UNCHECKED_CAST")
+                constructor.invoke(
+                    constructorSpecParam as S,
+                    constructorContextParam,
+                    constructorControllerParam as WidgetController<S, D>
+                )
+            }
     }
 
     fun <S : WidgetSpec> registerWidgetType(
         specClass: KClass<S>,
-        constructor: (S) -> Widget
+        constructor: (S, DashboardContext) -> Widget
     ) {
-        specTypeToConstructor1Map[specClass] = { spec ->
+        specTypeToConstructor1Map[specClass] = { spec, context ->
             @Suppress("UNCHECKED_CAST")
-            constructor.invoke(spec as S)
+            constructor.invoke(spec as S, context)
         }
     }
 
-    fun createWidget(spec: WidgetSpec): Widget {
+    fun createWidget(spec: WidgetSpec, context: DashboardContext): Widget {
         val controller = specTypeToControllerMap[spec::class]
         return if (controller != null) {
-            specTypeToConstructor2Map.getValue(spec::class).invoke(spec, controller)
+            specTypeToConstructor2Map.getValue(spec::class).invoke(spec, context, controller)
         } else {
-            specTypeToConstructor1Map.getOrDefault(spec::class, ::ErrorWidget).invoke(spec)
+            specTypeToConstructor1Map.getOrDefault(spec::class, ::ErrorWidget).invoke(spec, context)
         }
     }
 
-    private class ErrorWidget(spec: WidgetSpec) : BaseWidgetWithoutController<WidgetSpec>(spec) {
+    private class ErrorWidget(spec: WidgetSpec, context: DashboardContext) :
+        BaseWidgetWithoutController<WidgetSpec>(spec, context) {
 
         override fun renderInto(target: HtmlBlockTag) = with(target) {
             div {

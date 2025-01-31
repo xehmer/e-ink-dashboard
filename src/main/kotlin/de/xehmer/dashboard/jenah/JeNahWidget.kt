@@ -1,17 +1,41 @@
 package de.xehmer.dashboard.jenah
 
 import de.xehmer.dashboard.api.models.JeNahWidgetSpec
+import de.xehmer.dashboard.dashboard.DashboardContext
 import de.xehmer.dashboard.widgets.BaseWidget
 import de.xehmer.dashboard.widgets.WidgetController
-import kotlinx.html.HtmlBlockTag
-import kotlinx.html.div
+import kotlinx.html.*
 
-class JeNahWidget(spec: JeNahWidgetSpec, controller: WidgetController<JeNahWidgetSpec, JeNahWidgetData>) :
-    BaseWidget<JeNahWidgetSpec, JeNahWidgetData>(spec, controller) {
+class JeNahWidget(
+    spec: JeNahWidgetSpec,
+    context: DashboardContext,
+    controller: WidgetController<JeNahWidgetSpec, JeNahWidgetData>
+) : BaseWidget<JeNahWidgetSpec, JeNahWidgetData>(spec, context, controller) {
 
     override fun renderInto(target: HtmlBlockTag) = with(target) {
+        val data = preparedData ?: return@with
+
         div {
-            +data?.departures.toString()
+            table {
+                thead {
+                    tr {
+                        td { +"Linie" }
+                        td { +"Richtung" }
+                        td { +"geplant" }
+                        td { +"voraussichtlich" }
+                    }
+                }
+                tbody {
+                    data.departures.forEach { departure ->
+                        tr {
+                            td { +departure.line.displayString }
+                            td { +departure.destination }
+                            td { +departure.plannedTime.toString() }
+                            td { +departure.predictedTime.toString() }
+                        }
+                    }
+                }
+            }
         }
     }
 }
