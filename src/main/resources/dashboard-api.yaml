@@ -10,12 +10,6 @@ paths:
   /dashboard:
     get:
       operationId: getDashboard
-      parameters:
-        - in: query
-          name: spec
-          required: true
-          schema:
-            type: string
       responses:
         200:
           description: OK
@@ -23,6 +17,19 @@ paths:
             text/html:
               schema:
                 type: string
+
+  /dashboard/spec:
+    put:
+      operationId: saveDashboardSpec
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DashboardSpec"
+      responses:
+        204:
+          description: success
 
 components:
   schemas:

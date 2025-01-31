@@ -6,7 +6,8 @@ gensrc/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### IntelliJ IDEA ###
+### IDEs ###
+## IntelliJ IDEA ##
 .idea/
 *.iws
 *.iml
@@ -15,9 +16,14 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### VS Code ###
+## VS Code ##
 .vscode/
 
 ### Kotlin ###
 .kotlin
 
+### Temporary files ###
+dashboard-spec.json
+
+### Credentials ###
+**/*.private.env.json

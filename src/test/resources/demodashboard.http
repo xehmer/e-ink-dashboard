@@ -1,3 +1,7 @@
+### Update dashboard spec being used
+PUT http://localhost:8080/dashboard/spec
+Content-Type: application/json
+
 {
   "displayWidth": 1000,
   "displayHeight": 500,
@@ -26,6 +30,21 @@
         "rowSpan": 1
       },
       "calendarId": "test"
+    },
+    {
+      "widgetType": "jenah",
+      "display": {
+        "startColumn": 2,
+        "columnSpan": 4,
+        "startRow": 1,
+        "rowSpan": 3
+      },
+      "apiClient": "{{jenahApiClient}}",
+      "apiAuthorization": "{{jenahApiAuthorization}}",
+      "station": "Zeiss-Werk"
     }
   ]
 }
+
+### Show dashboard
+GET http://localhost:8080/dashboard
