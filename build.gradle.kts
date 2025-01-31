@@ -10,7 +10,7 @@ plugins {
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
 
-    id("ch.acanda.gradle.fabrikt") version "1.9.0"
+    id("ch.acanda.gradle.fabrikt") version "1.11.0"
 }
 
 group = "de.xehmer"
@@ -83,26 +83,37 @@ dependencyManagement {
 
 fabrikt {
     defaults {
-//        outputDirectory = file("gensrc")
-//        sourcesPath = "kotlin"
-//        resourcesPath = "resources"
-    }
-    generate("dashboard") {
-        apiFile = file("src/main/resources/dashboard-api.yaml")
-        basePackage = "de.xehmer.dashboard.api"
-
         validationLibrary = NoValidation
-
         model {
             generate = enabled
             serializationLibrary = Jackson
         }
-
-        controller {
+        client {
             generate = enabled
+            target = OkHttp
+        }
+        controller {
+            generate = disabled
             target = Spring
         }
     }
+
+    generate("dashboard") {
+        apiFile = file("src/main/resources/dashboard-api.yaml")
+        basePackage = "de.xehmer.dashboard.api"
+
+        controller {
+            generate = enabled
+        }
+        client {
+            generate = disabled
+        }
+    }
+
+//    generate("brightsky") {
+//        apiFile = file("src/main/resources/apis/brightsky.yml")
+//        basePackage = "brightsky.api"
+//    }
 }
 
 kotlin {

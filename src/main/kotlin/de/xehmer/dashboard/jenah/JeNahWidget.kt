@@ -13,7 +13,7 @@ class JeNahWidget(
 ) : BaseWidget<JeNahWidgetSpec, JeNahWidgetData>(spec, context, controller) {
 
     override fun renderInto(target: HtmlBlockTag) = with(target) {
-        val data = preparedData ?: return@with
+        val data = preparedData ?: return
 
         div {
             table {
