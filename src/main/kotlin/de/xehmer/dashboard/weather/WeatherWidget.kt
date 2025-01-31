@@ -17,6 +17,7 @@ class WeatherWidget(
         val data = preparedData ?: return
 
         div {
+            +data.weather
         }
     }
 }
