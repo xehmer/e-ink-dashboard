@@ -40,7 +40,7 @@ Content-Type: application/json
 			"widgetType": "jenah",
 			"display": {
 				"startColumn": 2,
-				"columnSpan": 4,
+				"columnSpan": 6,
 				"startRow": 1,
 				"rowSpan": 3
 			},

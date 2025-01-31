@@ -30,8 +30,13 @@ class JeNahWidget(
                         tr {
                             td { +departure.line.displayString }
                             td { +departure.destination }
-                            td { +departure.plannedTime.toString() }
-                            td { +departure.predictedTime.toString() }
+                            td { +departure.plannedTime.time.toString() }
+                            td {
+                                +departure.predictedTime.time.toString()
+                                if (departure.delay.inWholeMinutes > 0) {
+                                    +" (+${departure.delay.inWholeMinutes})"
+                                }
+                            }
                         }
                     }
                 }

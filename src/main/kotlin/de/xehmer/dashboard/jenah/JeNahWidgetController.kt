@@ -9,7 +9,6 @@ import de.xehmer.dashboard.api.models.JeNahWidgetSpec
 import de.xehmer.dashboard.dashboard.DashboardContext
 import de.xehmer.dashboard.widgets.WidgetController
 import de.xehmer.dashboard.widgets.WidgetTypeRegistry
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime
@@ -34,20 +33,26 @@ class JeNahWidgetController(
         val suggestLocationsResult = vmtProvider.suggestLocations(spec.station, setOf(LocationType.STATION), 1)
         val location = suggestLocationsResult.locations[0]
 
-        val queryDeparturesResult = vmtProvider.queryDepartures(location.id, Date(), 5, true)
+        val queryDeparturesResult = vmtProvider.queryDepartures(location.id, Date(), 10, true)
 
         val mappedDepartures = queryDeparturesResult.stationDepartures.flatMap { it.departures }
             .map { createDeparture(it, context.timezone) }
+            .sortedBy { it.predictedTime }
 
         return JeNahWidgetData(mappedDepartures)
     }
 
     private fun createDeparture(pteDeparture: Departure, timeZone: TimeZone): JeNahWidgetData.Departure {
+        val plannedTime = pteDeparture.nullSafePlannedTime()
+        val predictedTime = pteDeparture.nullSafePredictedTime()
+        val delay = predictedTime.minus(plannedTime)
+
         return JeNahWidgetData.Departure(
             line = createLine(pteDeparture.line),
             destination = pteDeparture.destination?.name ?: UNKNOWN,
-            plannedTime = parseDate(pteDeparture.nullSafePlannedTime(), timeZone),
-            predictedTime = parseDate(pteDeparture.nullSafePredictedTime(), timeZone)
+            plannedTime = plannedTime.toLocalDateTime(timeZone),
+            predictedTime = predictedTime.toLocalDateTime(timeZone),
+            delay = delay
         )
     }
 
@@ -65,10 +70,10 @@ class JeNahWidgetController(
         else -> JeNahWidgetData.TransportType.UNKNOWN
     }
 
-    private fun parseDate(pteDate: Date, timeZone: TimeZone): LocalDateTime =
-        pteDate.toInstant().toKotlinInstant().toLocalDateTime(timeZone)
+    private fun Departure.nullSafePlannedTime() =
+        (this.plannedTime ?: this.predictedTime!!).toInstant().toKotlinInstant()
 
-    private fun Departure.nullSafePlannedTime() = this.plannedTime ?: this.predictedTime!!
-    private fun Departure.nullSafePredictedTime() = this.predictedTime ?: this.plannedTime!!
+    private fun Departure.nullSafePredictedTime() =
+        (this.predictedTime ?: this.plannedTime!!).toInstant().toKotlinInstant()
 
 }
