@@ -6,6 +6,6 @@ import kotlinx.html.HtmlBlockTag
 interface Widget {
     val displaySpec: WidgetDisplaySpec
 
-    fun prepareRender()
+    fun prepareRender() = Unit
     fun renderInto(target: HtmlBlockTag)
 }

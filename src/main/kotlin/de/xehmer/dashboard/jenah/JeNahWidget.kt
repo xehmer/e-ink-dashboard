@@ -2,19 +2,17 @@ package de.xehmer.dashboard.jenah
 
 import de.xehmer.dashboard.api.models.JeNahWidgetSpec
 import de.xehmer.dashboard.dashboard.DashboardContext
-import de.xehmer.dashboard.widgets.BaseWidget
 import de.xehmer.dashboard.widgets.WidgetController
+import de.xehmer.dashboard.widgets.WidgetWithData
 import kotlinx.html.*
 
 class JeNahWidget(
     spec: JeNahWidgetSpec,
     context: DashboardContext,
     controller: WidgetController<JeNahWidgetSpec, JeNahWidgetData>
-) : BaseWidget<JeNahWidgetSpec, JeNahWidgetData>(spec, context, controller) {
+) : WidgetWithData<JeNahWidgetSpec, JeNahWidgetData>(spec, context, controller) {
 
-    override fun renderInto(target: HtmlBlockTag) = with(target) {
-        val data = preparedData ?: return
-
+    override fun renderInto(target: HtmlBlockTag, data: JeNahWidgetData) = with(target) {
         div {
             table {
                 thead {

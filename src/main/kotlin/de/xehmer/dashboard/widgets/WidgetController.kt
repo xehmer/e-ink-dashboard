@@ -4,5 +4,5 @@ import de.xehmer.dashboard.api.models.WidgetSpec
 import de.xehmer.dashboard.dashboard.DashboardContext
 
 fun interface WidgetController<S : WidgetSpec, D> {
-    fun getData(spec: S, context: DashboardContext): D?
+    fun getData(spec: S, context: DashboardContext): D
 }

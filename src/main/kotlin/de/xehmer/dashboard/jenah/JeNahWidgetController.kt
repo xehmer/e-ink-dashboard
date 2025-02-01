@@ -27,7 +27,7 @@ class JeNahWidgetController(
         widgetTypeRegistry.registerWidgetType(JeNahWidgetSpec::class, this, ::JeNahWidget)
     }
 
-    override fun getData(spec: JeNahWidgetSpec, context: DashboardContext): JeNahWidgetData? {
+    override fun getData(spec: JeNahWidgetSpec, context: DashboardContext): JeNahWidgetData {
         val vmtProvider = VmtProvider(spec.apiClient, spec.apiAuthorization)
 
         val suggestLocationsResult = vmtProvider.suggestLocations(spec.station, setOf(LocationType.STATION), 1)

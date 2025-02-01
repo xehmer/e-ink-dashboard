@@ -13,9 +13,9 @@ import kotlin.reflect.KClass
 @Service
 class WidgetTypeRegistry {
 
-    private val specTypeToConstructor1Map: MutableMap<KClass<out WidgetSpec>, (WidgetSpec, DashboardContext) -> Widget> =
+    private val widgetWithoutDataConstructors: MutableMap<KClass<out WidgetSpec>, (WidgetSpec, DashboardContext) -> Widget> =
         mutableMapOf()
-    private val specTypeToConstructor2Map: MutableMap<KClass<out WidgetSpec>, (WidgetSpec, DashboardContext, WidgetController<*, *>) -> Widget> =
+    private val widgetWithDataConstructors: MutableMap<KClass<out WidgetSpec>, (WidgetSpec, DashboardContext, WidgetController<*, *>) -> Widget> =
         mutableMapOf()
     private val specTypeToControllerMap: MutableMap<KClass<out WidgetSpec>, WidgetController<*, *>> = mutableMapOf()
 
@@ -25,7 +25,7 @@ class WidgetTypeRegistry {
         constructor: (S, DashboardContext, WidgetController<S, D>) -> Widget
     ) {
         specTypeToControllerMap[specClass] = controller
-        specTypeToConstructor2Map[specClass] =
+        widgetWithDataConstructors[specClass] =
             { constructorSpecParam, constructorContextParam, constructorControllerParam ->
                 @Suppress("UNCHECKED_CAST")
                 constructor.invoke(
@@ -40,7 +40,7 @@ class WidgetTypeRegistry {
         specClass: KClass<S>,
         constructor: (S, DashboardContext) -> Widget
     ) {
-        specTypeToConstructor1Map[specClass] = { spec, context ->
+        widgetWithoutDataConstructors[specClass] = { spec, context ->
             @Suppress("UNCHECKED_CAST")
             constructor.invoke(spec as S, context)
         }
@@ -49,14 +49,14 @@ class WidgetTypeRegistry {
     fun createWidget(spec: WidgetSpec, context: DashboardContext): Widget {
         val controller = specTypeToControllerMap[spec::class]
         return if (controller != null) {
-            specTypeToConstructor2Map.getValue(spec::class).invoke(spec, context, controller)
+            widgetWithDataConstructors.getValue(spec::class).invoke(spec, context, controller)
         } else {
-            specTypeToConstructor1Map.getOrDefault(spec::class, ::ErrorWidget).invoke(spec, context)
+            widgetWithoutDataConstructors.getOrDefault(spec::class, ::ErrorWidget).invoke(spec, context)
         }
     }
 
     private class ErrorWidget(spec: WidgetSpec, context: DashboardContext) :
-        BaseWidgetWithoutController<WidgetSpec>(spec, context) {
+        WidgetWithoutData<WidgetSpec>(spec, context) {
 
         override fun renderInto(target: HtmlBlockTag) = with(target) {
             div {
