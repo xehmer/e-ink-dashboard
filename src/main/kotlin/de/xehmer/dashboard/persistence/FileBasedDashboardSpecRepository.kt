@@ -6,11 +6,10 @@ import de.xehmer.dashboard.api.models.DashboardSpec
 import org.springframework.stereotype.Service
 import java.io.File
 
+private const val FILENAME = "dashboard-spec.json"
+
 @Service
 class FileBasedDashboardSpecRepository(private val objectMapper: ObjectMapper) : DashboardSpecRepository {
-    companion object {
-        private const val FILENAME = "dashboard-spec.json"
-    }
 
     override fun loadDashboardSpec(): DashboardSpec? {
         val file = File(FILENAME)

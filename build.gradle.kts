@@ -37,6 +37,7 @@ dependencies {
     // Spring
     implementation("org.springframework.boot", "spring-boot-starter-web")
     implementation("org.springframework.boot", "spring-boot-starter-cache")
+    implementation("org.springframework.boot", "spring-boot-starter-actuator")
     implementation("org.springframework.modulith", "spring-modulith-starter-core")
 
     // Jackson and others directly related to Spring
@@ -44,7 +45,7 @@ dependencies {
     implementation("io.freefair.okhttp-spring-boot", "okhttp-spring-boot-starter", SpringBootPlugin.BOM_COORDINATES.substringAfterLast(':'))
 
     // "official" kotlin additions
-    implementation("org.jetbrains.kotlin", "kotlin-reflect")
+    implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.12.0")
     implementation("org.jetbrains.kotlinx", "kotlinx-datetime", "0.6.1")
     implementation("org.jetbrains.kotlin-wrappers", "kotlin-css", "2025.1.5")
@@ -63,7 +64,7 @@ dependencies {
     developmentOnly("org.springframework.boot", "spring-boot-devtools")
 
     testImplementation("org.springframework.boot", "spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin", "kotlin-test-junit5")
+    testImplementation(kotlin("test-junit5"))
     testImplementation("org.springframework.modulith", "spring-modulith-starter-test")
     testRuntimeOnly("org.junit.platform", "junit-platform-launcher")
 }

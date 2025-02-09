@@ -1,18 +1,14 @@
 package de.xehmer.dashboard.jenah
 
 import de.xehmer.dashboard.api.models.JeNahWidgetSpec
-import de.xehmer.dashboard.dashboard.DashboardContext
-import de.xehmer.dashboard.widgets.WidgetController
-import de.xehmer.dashboard.widgets.WidgetWithData
+import de.xehmer.dashboard.widgets.PreparedWidget
+import de.xehmer.dashboard.widgets.WidgetRenderer
 import kotlinx.html.*
+import org.springframework.stereotype.Service
 
-class JeNahWidget(
-    spec: JeNahWidgetSpec,
-    context: DashboardContext,
-    controller: WidgetController<JeNahWidgetSpec, JeNahWidgetData>
-) : WidgetWithData<JeNahWidgetSpec, JeNahWidgetData>(spec, context, controller) {
-
-    override fun renderInto(target: HtmlBlockTag, data: JeNahWidgetData) = with(target) {
+@Service
+class JeNahWidgetRenderer : WidgetRenderer<JeNahWidgetSpec, JeNahWidgetData> {
+    override fun render(widget: PreparedWidget<JeNahWidgetSpec, JeNahWidgetData>, target: HtmlBlockTag) = with(target) {
         div {
             table {
                 thead {
@@ -24,7 +20,7 @@ class JeNahWidget(
                     }
                 }
                 tbody {
-                    data.departures.forEach { departure ->
+                    widget.data.departures.forEach { departure ->
                         tr {
                             td { +departure.line.displayString }
                             td { +departure.destination }

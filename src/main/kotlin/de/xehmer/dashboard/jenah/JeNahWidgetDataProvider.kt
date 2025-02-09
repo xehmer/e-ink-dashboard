@@ -6,9 +6,8 @@ import de.schildbach.pte.dto.Line
 import de.schildbach.pte.dto.LocationType
 import de.schildbach.pte.dto.Product
 import de.xehmer.dashboard.api.models.JeNahWidgetSpec
-import de.xehmer.dashboard.dashboard.DashboardContext
-import de.xehmer.dashboard.widgets.WidgetController
-import de.xehmer.dashboard.widgets.WidgetTypeRegistry
+import de.xehmer.dashboard.widgets.UnpreparedWidget
+import de.xehmer.dashboard.widgets.WidgetDataProvider
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime
@@ -18,25 +17,18 @@ import java.util.*
 private const val UNKNOWN = "unknown"
 
 @Service
-class JeNahWidgetController(
-    widgetTypeRegistry: WidgetTypeRegistry
-) : WidgetController<JeNahWidgetSpec, JeNahWidgetData> {
+class JeNahWidgetDataProvider : WidgetDataProvider<JeNahWidgetSpec, JeNahWidgetData> {
 
-    init {
-        @Suppress("LeakingThis")
-        widgetTypeRegistry.registerWidgetType(JeNahWidgetSpec::class, this, ::JeNahWidget)
-    }
+    override fun getData(widget: UnpreparedWidget<JeNahWidgetSpec>): JeNahWidgetData {
+        val vmtProvider = VmtProvider(widget.spec.apiClient, widget.spec.apiAuthorization)
 
-    override fun getData(spec: JeNahWidgetSpec, context: DashboardContext): JeNahWidgetData {
-        val vmtProvider = VmtProvider(spec.apiClient, spec.apiAuthorization)
-
-        val suggestLocationsResult = vmtProvider.suggestLocations(spec.station, setOf(LocationType.STATION), 1)
+        val suggestLocationsResult = vmtProvider.suggestLocations(widget.spec.station, setOf(LocationType.STATION), 1)
         val location = suggestLocationsResult.locations[0]
 
         val queryDeparturesResult = vmtProvider.queryDepartures(location.id, Date(), 10, true)
 
         val mappedDepartures = queryDeparturesResult.stationDepartures.flatMap { it.departures }
-            .map { createDeparture(it, context.timezone) }
+            .map { createDeparture(it, widget.context.timezone) }
             .sortedBy { it.predictedTime }
 
         return JeNahWidgetData(mappedDepartures)
@@ -75,5 +67,4 @@ class JeNahWidgetController(
 
     private fun Departure.nullSafePredictedTime() =
         (this.predictedTime ?: this.plannedTime!!).toInstant().toKotlinInstant()
-
 }

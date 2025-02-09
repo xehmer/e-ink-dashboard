@@ -1,11 +1,15 @@
 package de.xehmer.dashboard.widgets
 
-import de.xehmer.dashboard.api.models.WidgetDisplaySpec
-import kotlinx.html.HtmlBlockTag
+import de.xehmer.dashboard.api.models.WidgetSpec
+import de.xehmer.dashboard.dashboard.DashboardContext
 
-interface Widget {
-    val displaySpec: WidgetDisplaySpec
+data class UnpreparedWidget<S : WidgetSpec>(
+    val spec: S,
+    val context: DashboardContext,
+)
 
-    fun prepareRender() = Unit
-    fun renderInto(target: HtmlBlockTag)
-}
+data class PreparedWidget<S : WidgetSpec, D : Any>(
+    val spec: S,
+    val context: DashboardContext,
+    val data: D,
+)
