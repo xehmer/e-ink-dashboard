@@ -1,6 +1,5 @@
 package de.xehmer.dashboard.weather
 
-import de.xehmer.dashboard.api.models.WeatherWidgetSpec
 import de.xehmer.dashboard.widgets.PreparedWidget
 import de.xehmer.dashboard.widgets.WidgetRenderer
 import kotlinx.html.HtmlBlockTag

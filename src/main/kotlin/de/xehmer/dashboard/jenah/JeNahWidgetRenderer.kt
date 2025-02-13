@@ -1,6 +1,5 @@
 package de.xehmer.dashboard.jenah
 
-import de.xehmer.dashboard.api.models.JeNahWidgetSpec
 import de.xehmer.dashboard.widgets.PreparedWidget
 import de.xehmer.dashboard.widgets.WidgetRenderer
 import kotlinx.html.*

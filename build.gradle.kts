@@ -9,6 +9,7 @@ plugins {
 
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
 
     id("ch.acanda.gradle.fabrikt") version "1.11.0"
 }
@@ -30,7 +31,6 @@ configurations {
 
 repositories {
     mavenCentral()
-//    mavenLocal()
 }
 
 dependencies {
@@ -40,17 +40,22 @@ dependencies {
     implementation("org.springframework.boot", "spring-boot-starter-actuator")
     implementation("org.springframework.modulith", "spring-modulith-starter-core")
 
-    // Jackson and others directly related to Spring
+    // Jackson and others closely related to Spring
     implementation("com.fasterxml.jackson.module", "jackson-module-kotlin")
-    implementation("io.freefair.okhttp-spring-boot", "okhttp-spring-boot-starter", SpringBootPlugin.BOM_COORDINATES.substringAfterLast(':'))
+    implementation(
+        "io.freefair.okhttp-spring-boot",
+        "okhttp-spring-boot-starter",
+        SpringBootPlugin.BOM_COORDINATES.substringAfterLast(':')
+    )
+    implementation("org.springdoc", "springdoc-openapi-starter-webmvc-ui", "2.8.4")
 
-    // "official" kotlin additions
+    // "official" Kotlin additions
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.12.0")
     implementation("org.jetbrains.kotlinx", "kotlinx-datetime", "0.6.1")
     implementation("org.jetbrains.kotlin-wrappers", "kotlin-css", "2025.1.5")
 
-    // my custom stuff
+    // additional stuff
     implementation("de.schildbach.pte", "public-transport-enabler") {
         version {
             branch = "master"
@@ -63,6 +68,7 @@ dependencies {
     // misc. non-production stuff
     developmentOnly("org.springframework.boot", "spring-boot-devtools")
 
+    // test
     testImplementation("org.springframework.boot", "spring-boot-starter-test")
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.springframework.modulith", "spring-modulith-starter-test")
@@ -96,18 +102,6 @@ fabrikt {
         controller {
             generate = disabled
             target = Spring
-        }
-    }
-
-    generate("dashboard") {
-        apiFile = file("src/main/resources/dashboard-api.yaml")
-        basePackage = "de.xehmer.dashboard.api"
-
-        controller {
-            generate = enabled
-        }
-        client {
-            generate = disabled
         }
     }
 

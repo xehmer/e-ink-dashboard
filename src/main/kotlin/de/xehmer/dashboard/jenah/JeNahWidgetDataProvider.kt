@@ -5,7 +5,6 @@ import de.schildbach.pte.dto.Departure
 import de.schildbach.pte.dto.Line
 import de.schildbach.pte.dto.LocationType
 import de.schildbach.pte.dto.Product
-import de.xehmer.dashboard.api.models.JeNahWidgetSpec
 import de.xehmer.dashboard.widgets.UnpreparedWidget
 import de.xehmer.dashboard.widgets.WidgetDataProvider
 import kotlinx.datetime.TimeZone
