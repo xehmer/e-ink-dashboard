@@ -8,6 +8,6 @@ import org.springframework.modulith.ApplicationModule
 @Configuration
 class WeatherWidgetModule(subtypeRegisteringAnnotationIntrospector: SubtypeRegisteringAnnotationIntrospector) {
     init {
-        subtypeRegisteringAnnotationIntrospector.registerSubtype(WeatherWidgetSpec::class)
+        subtypeRegisteringAnnotationIntrospector.registerSubtype(WeatherWidgetDefinition::class)
     }
 }

@@ -7,6 +7,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     include = JsonTypeInfo.As.PROPERTY,
     property = "widgetType",
 )
-interface WidgetSpec {
-    val display: WidgetDisplaySpec
+interface WidgetDefinition {
+    val display: WidgetDisplayDefinition
 }

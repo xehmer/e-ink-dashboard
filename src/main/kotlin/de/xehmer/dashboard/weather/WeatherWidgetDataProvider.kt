@@ -5,10 +5,10 @@ import de.xehmer.dashboard.widgets.WidgetDataProvider
 import org.springframework.stereotype.Service
 
 @Service
-class WeatherWidgetDataProvider : WidgetDataProvider<WeatherWidgetSpec, WeatherWidgetData> {
+class WeatherWidgetDataProvider : WidgetDataProvider<WeatherWidgetDefinition, WeatherWidgetData> {
 
-    override fun getData(widget: UnpreparedWidget<WeatherWidgetSpec>): WeatherWidgetData {
-        return WeatherWidgetData("Weather for ${widget.spec.lat}:${widget.spec.lon}")
+    override fun getData(widget: UnpreparedWidget<WeatherWidgetDefinition>): WeatherWidgetData {
+        return WeatherWidgetData("Weather for ${widget.definition.lat}:${widget.definition.lon}")
     }
 
 }

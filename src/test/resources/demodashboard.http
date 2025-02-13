@@ -1,5 +1,5 @@
-### Update dashboard spec being used
-PUT http://localhost:8080/dashboard/spec
+### Update dashboard definition being used
+PUT http://localhost:8080/dashboard/definition
 Content-Type: application/json
 
 {

@@ -8,6 +8,6 @@ import org.springframework.modulith.ApplicationModule
 @Configuration
 class CalendarWidgetModule(subtypeRegisteringAnnotationIntrospector: SubtypeRegisteringAnnotationIntrospector) {
     init {
-        subtypeRegisteringAnnotationIntrospector.registerSubtype(CalendarWidgetSpec::class)
+        subtypeRegisteringAnnotationIntrospector.registerSubtype(CalendarWidgetDefinition::class)
     }
 }

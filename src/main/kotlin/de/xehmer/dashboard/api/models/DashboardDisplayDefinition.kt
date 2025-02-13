@@ -1,6 +1,6 @@
 package de.xehmer.dashboard.api.models
 
-data class DashboardDisplaySpec(
+data class DashboardDisplayDefinition(
     val width: Int,
     val height: Int,
     val columnCount: Int,

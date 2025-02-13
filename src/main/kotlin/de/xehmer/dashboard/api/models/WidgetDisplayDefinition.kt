@@ -1,6 +1,6 @@
 package de.xehmer.dashboard.api.models
 
-data class WidgetDisplaySpec(
+data class WidgetDisplayDefinition(
     val startColumn: Int,
     val columnSpan: Int,
     val startRow: Int,

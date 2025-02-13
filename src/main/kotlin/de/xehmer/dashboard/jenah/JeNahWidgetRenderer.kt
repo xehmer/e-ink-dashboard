@@ -6,8 +6,11 @@ import kotlinx.html.*
 import org.springframework.stereotype.Service
 
 @Service
-class JeNahWidgetRenderer : WidgetRenderer<JeNahWidgetSpec, JeNahWidgetData> {
-    override fun render(widget: PreparedWidget<JeNahWidgetSpec, JeNahWidgetData>, target: HtmlBlockTag) = with(target) {
+class JeNahWidgetRenderer : WidgetRenderer<JeNahWidgetDefinition, JeNahWidgetData> {
+    override fun render(
+        widget: PreparedWidget<JeNahWidgetDefinition, JeNahWidgetData>,
+        target: HtmlBlockTag
+    ) = with(target) {
         div {
             table {
                 thead {

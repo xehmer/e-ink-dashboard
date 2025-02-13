@@ -23,7 +23,7 @@ out/
 .kotlin
 
 ### Temporary files ###
-dashboard-spec.json
+dashboard-definition.json
 
 ### Credentials ###
 **/*.private.env.json

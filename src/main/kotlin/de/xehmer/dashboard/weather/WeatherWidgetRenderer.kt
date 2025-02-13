@@ -7,11 +7,13 @@ import kotlinx.html.div
 import org.springframework.stereotype.Service
 
 @Service
-class WeatherWidgetRenderer : WidgetRenderer<WeatherWidgetSpec, WeatherWidgetData> {
-    override fun render(widget: PreparedWidget<WeatherWidgetSpec, WeatherWidgetData>, target: HtmlBlockTag) =
-        with(target) {
-            div {
-                +widget.data.weather
-            }
+class WeatherWidgetRenderer : WidgetRenderer<WeatherWidgetDefinition, WeatherWidgetData> {
+    override fun render(
+        widget: PreparedWidget<WeatherWidgetDefinition, WeatherWidgetData>,
+        target: HtmlBlockTag
+    ) = with(target) {
+        div {
+            +widget.data.weather
         }
+    }
 }

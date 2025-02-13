@@ -8,6 +8,6 @@ import org.springframework.modulith.ApplicationModule
 @Configuration
 class JeNahWidgetModule(subtypeRegisteringAnnotationIntrospector: SubtypeRegisteringAnnotationIntrospector) {
     init {
-        subtypeRegisteringAnnotationIntrospector.registerSubtype(JeNahWidgetSpec::class)
+        subtypeRegisteringAnnotationIntrospector.registerSubtype(JeNahWidgetDefinition::class)
     }
 }

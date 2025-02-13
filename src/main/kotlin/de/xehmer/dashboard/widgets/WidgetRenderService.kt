@@ -1,6 +1,6 @@
 package de.xehmer.dashboard.widgets
 
-import de.xehmer.dashboard.api.models.WidgetSpec
+import de.xehmer.dashboard.api.models.WidgetDefinition
 import de.xehmer.dashboard.utils.KotlinUtils
 import kotlinx.html.HtmlBlockTag
 import org.springframework.stereotype.Service
@@ -10,9 +10,9 @@ class WidgetRenderService(private val widgetRenderers: List<WidgetRenderer<*, *>
 
     fun renderWidget(widget: PreparedWidget<*, *>, target: HtmlBlockTag) {
         for (renderer in widgetRenderers) {
-            val specClass = KotlinUtils.getSupertypeTypeArgument(renderer, WidgetRenderer::class, 0)
+            val definitionClass = KotlinUtils.getSupertypeTypeArgument(renderer, WidgetRenderer::class, 0)
             val dataClass = KotlinUtils.getSupertypeTypeArgument(renderer, WidgetRenderer::class, 1)
-            if (specClass.isInstance(widget.spec) && dataClass.isInstance(widget.data)) {
+            if (definitionClass.isInstance(widget.definition) && dataClass.isInstance(widget.data)) {
                 renderer.renderWithUncheckedCast(widget, target)
                 return
             }
@@ -20,7 +20,7 @@ class WidgetRenderService(private val widgetRenderers: List<WidgetRenderer<*, *>
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <S : WidgetSpec, D : Any> WidgetRenderer<S, D>.renderWithUncheckedCast(
+    private fun <S : WidgetDefinition, D : Any> WidgetRenderer<S, D>.renderWithUncheckedCast(
         widget: PreparedWidget<*, *>,
         target: HtmlBlockTag
     ) {

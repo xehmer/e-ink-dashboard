@@ -1,6 +1,6 @@
 package de.xehmer.dashboard.renderer
 
-import de.xehmer.dashboard.api.models.DashboardSpec
+import de.xehmer.dashboard.api.models.DashboardDefinition
 import de.xehmer.dashboard.dashboard.DashboardContext
 import de.xehmer.dashboard.utils.inlineStyle
 import de.xehmer.dashboard.utils.repeat
@@ -24,18 +24,20 @@ class DashboardRenderer(
     private val widgetRenderService: WidgetRenderService,
     private val widgetPreparationService: WidgetPreparationService,
 ) {
-    fun renderDashboard(dashboardSpec: DashboardSpec): String {
-        val unpreparedWidgets = createWidgets(dashboardSpec)
+    fun renderDashboard(dashboardDefinition: DashboardDefinition): String {
+        val unpreparedWidgets = createWidgets(dashboardDefinition)
         val preparedWidgets = prepareWidgets(unpreparedWidgets)
-        return buildHTML(dashboardSpec, preparedWidgets)
+        return buildHTML(dashboardDefinition, preparedWidgets)
     }
 
-    private fun createWidgets(dashboardSpec: DashboardSpec): List<UnpreparedWidget<*>> {
+    private fun createWidgets(dashboardDefinition: DashboardDefinition): List<UnpreparedWidget<*>> {
         val dashboardContext = DashboardContext(
-            timezone = TimeZone.of(dashboardSpec.context.timeZone),
-            locale = Locale.of(dashboardSpec.context.locale)
+            timezone = TimeZone.of(dashboardDefinition.context.timeZone),
+            locale = Locale.of(dashboardDefinition.context.locale)
         )
-        return dashboardSpec.widgets.map { widgetSpec -> UnpreparedWidget(widgetSpec, dashboardContext) }
+        return dashboardDefinition.widgets.map { widgetDefinition ->
+            UnpreparedWidget(widgetDefinition, dashboardContext)
+        }
     }
 
     private fun prepareWidgets(widgets: List<UnpreparedWidget<*>>): List<PreparedWidget<*, *>> {
@@ -51,13 +53,13 @@ class DashboardRenderer(
                     StructuredTaskScope.Subtask.State.SUCCESS -> subtask.get()!!
 
                     StructuredTaskScope.Subtask.State.FAILED -> PreparedWidget(
-                        widget.spec,
+                        widget.definition,
                         widget.context,
                         ErrorWidgetData(subtask.exception())
                     )
 
                     else -> PreparedWidget(
-                        widget.spec,
+                        widget.definition,
                         widget.context,
                         ErrorWidgetData("Unknown error during widget preparation")
                     )
@@ -67,7 +69,7 @@ class DashboardRenderer(
         }
     }
 
-    private fun buildHTML(dashboardSpec: DashboardSpec, widgets: List<PreparedWidget<*, *>>) =
+    private fun buildHTML(dashboardDefinition: DashboardDefinition, widgets: List<PreparedWidget<*, *>>) =
         createHTML(prettyPrint = false).html {
             inlineStyle {
                 fontSize = 1.25.rem
@@ -78,8 +80,8 @@ class DashboardRenderer(
                 inlineStyle {
                     margin = Margin(0.pt)
                     padding = Padding(0.pt)
-                    width = dashboardSpec.display.width.px
-                    height = dashboardSpec.display.height.px
+                    width = dashboardDefinition.display.width.px
+                    height = dashboardDefinition.display.height.px
                 }
 
                 div {
@@ -89,8 +91,8 @@ class DashboardRenderer(
                         width = 100.pct - 0.5.rem
                         height = 100.pct - 0.5.rem
                         display = Display.grid
-                        gridTemplateColumns = GridTemplateColumns.repeat(dashboardSpec.display.columnCount, 1.fr)
-                        gridTemplateRows = GridTemplateRows.repeat(dashboardSpec.display.rowCount, 1.fr)
+                        gridTemplateColumns = GridTemplateColumns.repeat(dashboardDefinition.display.columnCount, 1.fr)
+                        gridTemplateRows = GridTemplateRows.repeat(dashboardDefinition.display.rowCount, 1.fr)
                         gap = 0.125.rem
                     }
 
@@ -98,12 +100,13 @@ class DashboardRenderer(
                         div {
                             id = "grid-item-$index"
                             inlineStyle {
-                                val displaySpec = widget.spec.display
-                                gridColumn = GridColumn("${displaySpec.startColumn} / span ${displaySpec.columnSpan}")
-                                gridRow = GridRow("${displaySpec.startRow} / span ${displaySpec.rowSpan}")
+                                val displayDefinition = widget.definition.display
+                                gridColumn =
+                                    GridColumn("${displayDefinition.startColumn} / span ${displayDefinition.columnSpan}")
+                                gridRow = GridRow("${displayDefinition.startRow} / span ${displayDefinition.rowSpan}")
                                 overflow = Overflow.hidden
-                                displaySpec.align?.let { alignSelf = Align.valueOf(it) }
-                                displaySpec.justify?.let { justifySelf = JustifySelf.valueOf(it) }
+                                displayDefinition.align?.let { alignSelf = Align.valueOf(it) }
+                                displayDefinition.justify?.let { justifySelf = JustifySelf.valueOf(it) }
                             }
 
                             widgetRenderService.renderWidget(widget, this)

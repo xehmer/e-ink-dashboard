@@ -16,12 +16,14 @@ import java.util.*
 private const val UNKNOWN = "unknown"
 
 @Service
-class JeNahWidgetDataProvider : WidgetDataProvider<JeNahWidgetSpec, JeNahWidgetData> {
+class JeNahWidgetDataProvider : WidgetDataProvider<JeNahWidgetDefinition, JeNahWidgetData> {
 
-    override fun getData(widget: UnpreparedWidget<JeNahWidgetSpec>): JeNahWidgetData {
-        val vmtProvider = VmtProvider(widget.spec.apiClient, widget.spec.apiAuthorization)
+    override fun getData(widget: UnpreparedWidget<JeNahWidgetDefinition>): JeNahWidgetData {
+        val vmtProvider = VmtProvider(widget.definition.apiClient, widget.definition.apiAuthorization)
 
-        val suggestLocationsResult = vmtProvider.suggestLocations(widget.spec.station, setOf(LocationType.STATION), 1)
+        val suggestLocationsResult = vmtProvider.suggestLocations(
+            widget.definition.station, setOf(LocationType.STATION), 1
+        )
         val location = suggestLocationsResult.locations[0]
 
         val queryDeparturesResult = vmtProvider.queryDepartures(location.id, Date(), 10, true)

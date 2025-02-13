@@ -1,6 +1,6 @@
 package de.xehmer.dashboard.widgets
 
-import de.xehmer.dashboard.api.models.WidgetSpec
+import de.xehmer.dashboard.api.models.WidgetDefinition
 import de.xehmer.dashboard.utils.inlineStyle
 import kotlinx.css.*
 import kotlinx.html.HtmlBlockTag
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service
 
 @Service
 @Order(Ordered.LOWEST_PRECEDENCE)
-class FallbackWidgetRenderer : WidgetRenderer<WidgetSpec, Any> {
-    override fun render(widget: PreparedWidget<WidgetSpec, Any>, target: HtmlBlockTag) = with(target) {
+class FallbackWidgetRenderer : WidgetRenderer<WidgetDefinition, Any> {
+    override fun render(widget: PreparedWidget<WidgetDefinition, Any>, target: HtmlBlockTag) = with(target) {
         div {
             classes = setOf("widget-unknown")
             inlineStyle {
@@ -22,7 +22,7 @@ class FallbackWidgetRenderer : WidgetRenderer<WidgetSpec, Any> {
                 fontSize = 0.5.rem
             }
 
-            +"No renderer defined for spec [${widget.spec}] and data [${widget.data}]"
+            +"No renderer defined for widget definition [${widget.definition}] and data [${widget.data}]"
         }
     }
 }

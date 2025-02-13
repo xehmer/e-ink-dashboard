@@ -1,7 +1,7 @@
 package de.xehmer.dashboard.web
 
-import de.xehmer.dashboard.api.models.DashboardSpec
-import de.xehmer.dashboard.persistence.DashboardSpecRepository
+import de.xehmer.dashboard.api.models.DashboardDefinition
+import de.xehmer.dashboard.persistence.DashboardDefinitionRepository
 import de.xehmer.dashboard.renderer.DashboardRenderer
 import kotlinx.html.body
 import kotlinx.html.html
@@ -16,24 +16,24 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class DashboardWebController(
     private val renderer: DashboardRenderer,
-    private val dashboardSpecRepository: DashboardSpecRepository,
+    private val dashboardDefinitionRepository: DashboardDefinitionRepository,
 ) {
 
     @GetMapping("/dashboard", produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun getDashboard(): String {
-        val spec = dashboardSpecRepository.loadDashboardSpec()
-        val html = if (spec == null) {
-            createHTML().html { body { +"No saved spec found." } }
+        val definition = dashboardDefinitionRepository.loadDashboardDefinition()
+        val html = if (definition == null) {
+            createHTML().html { body { +"No saved definition found." } }
         } else {
-            renderer.renderDashboard(spec)
+            renderer.renderDashboard(definition)
         }
         return html
     }
 
-    @PutMapping("/dashboard/spec", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PutMapping("/dashboard/definition", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun saveDashboardSpec(dashboardSpec: DashboardSpec) {
-        dashboardSpecRepository.saveDashboardSpec(dashboardSpec)
+    fun saveDashboardDefinition(dashboardDefinition: DashboardDefinition) {
+        dashboardDefinitionRepository.saveDashboardDefinition(dashboardDefinition)
     }
 }

@@ -1,6 +1,6 @@
 package de.xehmer.dashboard.widgets
 
-import de.xehmer.dashboard.api.models.WidgetSpec
+import de.xehmer.dashboard.api.models.WidgetDefinition
 import de.xehmer.dashboard.utils.inlineStyle
 import kotlinx.css.*
 import kotlinx.html.HtmlBlockTag
@@ -14,8 +14,11 @@ class ErrorWidgetData(val errorMessage: String) {
 }
 
 @Service
-class ErrorWidgetRenderer : WidgetRenderer<WidgetSpec, ErrorWidgetData> {
-    override fun render(widget: PreparedWidget<WidgetSpec, ErrorWidgetData>, target: HtmlBlockTag) = with(target) {
+class ErrorWidgetRenderer : WidgetRenderer<WidgetDefinition, ErrorWidgetData> {
+    override fun render(
+        widget: PreparedWidget<WidgetDefinition, ErrorWidgetData>,
+        target: HtmlBlockTag
+    ) = with(target) {
         div {
             classes = setOf("widget-error")
             inlineStyle {
@@ -24,7 +27,7 @@ class ErrorWidgetRenderer : WidgetRenderer<WidgetSpec, ErrorWidgetData> {
                 fontSize = 0.5.rem
             }
 
-            p { +"Faulty/invalid widget spec: ${widget.spec}" }
+            p { +"Faulty/invalid widget definition: ${widget.definition}" }
             p { +"Error message: ${widget.data.errorMessage}" }
 
         }
