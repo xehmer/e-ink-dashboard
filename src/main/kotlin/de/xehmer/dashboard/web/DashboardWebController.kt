@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -33,7 +34,7 @@ class DashboardWebController(
 
     @PutMapping("/dashboard/definition", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun saveDashboardDefinition(dashboardDefinition: DashboardDefinition) {
+    fun saveDashboardDefinition(@RequestBody dashboardDefinition: DashboardDefinition) {
         dashboardDefinitionRepository.saveDashboardDefinition(dashboardDefinition)
     }
 }
