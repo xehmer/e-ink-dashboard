@@ -7,11 +7,11 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
 
-    id("org.springframework.boot") version "3.4.1"
+    id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
 
-    id("ch.acanda.gradle.fabrikt") version "1.11.0"
+    id("ch.acanda.gradle.fabrikt") version "1.12.0"
 }
 
 group = "de.xehmer"
@@ -47,7 +47,7 @@ dependencies {
         "okhttp-spring-boot-starter",
         SpringBootPlugin.BOM_COORDINATES.substringAfterLast(':')
     )
-    implementation("org.springdoc", "springdoc-openapi-starter-webmvc-ui", "2.8.4")
+    implementation("org.springdoc", "springdoc-openapi-starter-webmvc-ui", "2.8.5")
 
     // "official" Kotlin additions
     implementation(kotlin("reflect"))
@@ -77,7 +77,7 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.modulith:spring-modulith-bom:1.3.1")
+        mavenBom("org.springframework.modulith:spring-modulith-bom:1.3.2")
     }
 
     dependencies {
