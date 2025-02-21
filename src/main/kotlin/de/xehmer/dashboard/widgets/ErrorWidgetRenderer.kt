@@ -27,9 +27,8 @@ class ErrorWidgetRenderer : WidgetRenderer<WidgetDefinition, ErrorWidgetData> {
                 fontSize = 0.5.rem
             }
 
-            p { +"Faulty/invalid widget definition: ${widget.definition}" }
+            p { +"Could not render widget definition ${widget.definition}" }
             p { +"Error message: ${widget.data.errorMessage}" }
-
         }
     }
 }

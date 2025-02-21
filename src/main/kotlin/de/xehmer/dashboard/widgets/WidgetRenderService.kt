@@ -13,17 +13,10 @@ class WidgetRenderService(private val widgetRenderers: List<WidgetRenderer<*, *>
             val definitionClass = KotlinUtils.getSupertypeTypeArgument(renderer, WidgetRenderer::class, 0)
             val dataClass = KotlinUtils.getSupertypeTypeArgument(renderer, WidgetRenderer::class, 1)
             if (definitionClass.isInstance(widget.definition) && dataClass.isInstance(widget.data)) {
-                renderer.renderWithUncheckedCast(widget, target)
+                @Suppress("UNCHECKED_CAST")
+                (renderer as WidgetRenderer<WidgetDefinition, Any>).render(widget, target)
                 return
             }
         }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun <S : WidgetDefinition, D : Any> WidgetRenderer<S, D>.renderWithUncheckedCast(
-        widget: PreparedWidget<*, *>,
-        target: HtmlBlockTag
-    ) {
-        render(widget as PreparedWidget<S, D>, target)
     }
 }

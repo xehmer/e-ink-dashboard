@@ -10,16 +10,12 @@ class WidgetPreparationService(private val widgetDataProviders: List<WidgetDataP
         for (provider in widgetDataProviders) {
             val definitionClass = KotlinUtils.getSupertypeTypeArgument(provider, WidgetDataProvider::class, 0)
             if (definitionClass.isInstance(widget.definition)) {
-                val data = provider.getDataWithUncheckedCast(widget)
+                @Suppress("UNCHECKED_CAST")
+                val data = (provider as WidgetDataProvider<WidgetDefinition, Any>).getData(widget)
                 return PreparedWidget(widget.definition, widget.context, data)
             }
         }
 
         return PreparedWidget(widget.definition, widget.context, Unit)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun <S : WidgetDefinition, D : Any> WidgetDataProvider<S, D>.getDataWithUncheckedCast(widget: UnpreparedWidget<*>): D {
-        return this.getData(widget as UnpreparedWidget<S>)
     }
 }
