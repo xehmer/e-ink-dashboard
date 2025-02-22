@@ -5,9 +5,12 @@ import de.xehmer.dashboard.utils.KotlinUtils
 import kotlinx.html.HtmlBlockTag
 import org.springframework.stereotype.Service
 
+fun interface WidgetRenderer<S : WidgetDefinition, D : Any> {
+    fun render(widget: PreparedWidget<S, D>, target: HtmlBlockTag)
+}
+
 @Service
 class WidgetRenderService(private val widgetRenderers: List<WidgetRenderer<*, *>>) {
-
     fun renderWidget(widget: PreparedWidget<*, *>, target: HtmlBlockTag) {
         for (renderer in widgetRenderers) {
             val definitionClass = KotlinUtils.getSupertypeTypeArgument(renderer, WidgetRenderer::class, 0)

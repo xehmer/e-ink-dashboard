@@ -4,6 +4,10 @@ import de.xehmer.dashboard.api.models.WidgetDefinition
 import de.xehmer.dashboard.utils.KotlinUtils
 import org.springframework.stereotype.Service
 
+fun interface WidgetDataProvider<S : WidgetDefinition, D : Any> {
+    fun getData(widget: UnpreparedWidget<S>): D
+}
+
 @Service
 class WidgetPreparationService(private val widgetDataProviders: List<WidgetDataProvider<*, *>>) {
     fun prepareWidget(widget: UnpreparedWidget<*>): PreparedWidget<*, *> {
