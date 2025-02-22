@@ -1,25 +1,26 @@
 package de.xehmer.dashboard.widgets
 
 import de.xehmer.dashboard.api.models.WidgetDefinition
+import de.xehmer.dashboard.dashboard.DashboardContext
 import de.xehmer.dashboard.utils.KotlinUtils
 import org.springframework.stereotype.Service
 
 fun interface WidgetDataProvider<S : WidgetDefinition, D : Any> {
-    fun getData(widget: UnpreparedWidget<S>): D
+    fun getData(widgetDefinition: S, context: DashboardContext): D
 }
 
 @Service
 class WidgetPreparationService(private val widgetDataProviders: List<WidgetDataProvider<*, *>>) {
-    fun prepareWidget(widget: UnpreparedWidget<*>): PreparedWidget<*, *> {
+    fun prepareWidget(widgetDefinition: WidgetDefinition, context: DashboardContext): Widget<*, *> {
         for (provider in widgetDataProviders) {
             val definitionClass = KotlinUtils.getSupertypeTypeArgument(provider, WidgetDataProvider::class, 0)
-            if (definitionClass.isInstance(widget.definition)) {
+            if (definitionClass.isInstance(widgetDefinition)) {
                 @Suppress("UNCHECKED_CAST")
-                val data = (provider as WidgetDataProvider<WidgetDefinition, Any>).getData(widget)
-                return PreparedWidget(widget.definition, widget.context, data)
+                val data = (provider as WidgetDataProvider<WidgetDefinition, Any>).getData(widgetDefinition, context)
+                return Widget(widgetDefinition, data)
             }
         }
 
-        return PreparedWidget(widget.definition, widget.context, Unit)
+        return Widget(widgetDefinition, Unit)
     }
 }
