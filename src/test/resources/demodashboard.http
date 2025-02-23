@@ -13,7 +13,8 @@ Content-Type: application/json
 		"columnCount": 10,
 		"rowCount": 5
 	},
-	"widgets": [{
+	"widgets": [
+        {
 			"widgetType": "weather",
 			"display": {
 				"startColumn": 8,
