@@ -1,4 +1,4 @@
-package de.xehmer.dashboard.api.models
+package de.xehmer.dashboard.api
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 

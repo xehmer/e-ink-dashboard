@@ -2,7 +2,7 @@ package de.xehmer.dashboard.persistence.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import de.xehmer.dashboard.api.models.DashboardDefinition
+import de.xehmer.dashboard.api.DashboardDefinition
 import de.xehmer.dashboard.persistence.DashboardDefinitionRepository
 import org.springframework.stereotype.Service
 import java.io.File

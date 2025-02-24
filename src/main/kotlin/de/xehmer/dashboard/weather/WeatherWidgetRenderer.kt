@@ -1,7 +1,7 @@
 package de.xehmer.dashboard.weather
 
-import de.xehmer.dashboard.widgets.Widget
-import de.xehmer.dashboard.widgets.WidgetRenderer
+import de.xehmer.dashboard.base.Widget
+import de.xehmer.dashboard.base.WidgetRenderer
 import kotlinx.html.HtmlBlockTag
 import kotlinx.html.div
 import org.springframework.stereotype.Service

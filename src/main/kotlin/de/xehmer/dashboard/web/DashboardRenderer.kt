@@ -1,12 +1,12 @@
-package de.xehmer.dashboard.renderer
+package de.xehmer.dashboard.web
 
-import de.xehmer.dashboard.api.models.DashboardDefinition
-import de.xehmer.dashboard.dashboard.DashboardFactory
-import de.xehmer.dashboard.dashboard.DashboardPreparationService
-import de.xehmer.dashboard.dashboard.PreparedDashboard
+import de.xehmer.dashboard.api.DashboardDefinition
+import de.xehmer.dashboard.base.DashboardFactory
+import de.xehmer.dashboard.base.DashboardPreparationService
+import de.xehmer.dashboard.base.PreparedDashboard
+import de.xehmer.dashboard.base.WidgetRenderService
 import de.xehmer.dashboard.utils.inlineStyle
 import de.xehmer.dashboard.utils.repeat
-import de.xehmer.dashboard.widgets.WidgetRenderService
 import kotlinx.css.*
 import kotlinx.html.body
 import kotlinx.html.div

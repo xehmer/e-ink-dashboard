@@ -1,7 +1,7 @@
 package de.xehmer.dashboard.weather
 
-import de.xehmer.dashboard.dashboard.DashboardContext
-import de.xehmer.dashboard.widgets.WidgetDataProvider
+import de.xehmer.dashboard.base.DashboardContext
+import de.xehmer.dashboard.base.WidgetDataProvider
 import org.springframework.stereotype.Service
 
 data class WeatherWidgetData(

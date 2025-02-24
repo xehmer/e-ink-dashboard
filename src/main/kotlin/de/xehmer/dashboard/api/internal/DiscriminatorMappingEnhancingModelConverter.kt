@@ -1,4 +1,4 @@
-package de.xehmer.dashboard.api
+package de.xehmer.dashboard.api.internal
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.databind.JavaType

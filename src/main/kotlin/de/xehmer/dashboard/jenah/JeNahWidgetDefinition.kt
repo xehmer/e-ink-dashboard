@@ -1,8 +1,8 @@
 package de.xehmer.dashboard.jenah
 
 import com.fasterxml.jackson.annotation.JsonTypeName
-import de.xehmer.dashboard.api.models.WidgetDefinition
-import de.xehmer.dashboard.api.models.WidgetDisplayDefinition
+import de.xehmer.dashboard.api.WidgetDefinition
+import de.xehmer.dashboard.api.WidgetDisplayDefinition
 
 @JsonTypeName("jenah")
 data class JeNahWidgetDefinition(

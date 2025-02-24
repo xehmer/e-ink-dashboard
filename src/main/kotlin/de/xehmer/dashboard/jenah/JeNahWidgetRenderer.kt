@@ -1,7 +1,7 @@
 package de.xehmer.dashboard.jenah
 
-import de.xehmer.dashboard.widgets.Widget
-import de.xehmer.dashboard.widgets.WidgetRenderer
+import de.xehmer.dashboard.base.Widget
+import de.xehmer.dashboard.base.WidgetRenderer
 import kotlinx.html.*
 import org.springframework.stereotype.Service
 

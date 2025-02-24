@@ -1,8 +1,7 @@
-package de.xehmer.dashboard.dashboard
+package de.xehmer.dashboard.base
 
-import de.xehmer.dashboard.api.models.DashboardDisplayDefinition
-import de.xehmer.dashboard.api.models.WidgetDefinition
-import de.xehmer.dashboard.widgets.Widget
+import de.xehmer.dashboard.api.DashboardDisplayDefinition
+import de.xehmer.dashboard.api.WidgetDefinition
 import kotlinx.datetime.TimeZone
 import java.util.*
 

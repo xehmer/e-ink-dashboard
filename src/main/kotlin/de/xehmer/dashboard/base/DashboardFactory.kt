@@ -1,6 +1,6 @@
-package de.xehmer.dashboard.dashboard
+package de.xehmer.dashboard.base
 
-import de.xehmer.dashboard.api.models.DashboardDefinition
+import de.xehmer.dashboard.api.DashboardDefinition
 import kotlinx.datetime.TimeZone
 import org.springframework.stereotype.Service
 import java.util.*

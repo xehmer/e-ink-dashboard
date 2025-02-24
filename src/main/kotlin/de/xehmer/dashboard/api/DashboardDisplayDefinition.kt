@@ -1,4 +1,4 @@
-package de.xehmer.dashboard.api.models
+package de.xehmer.dashboard.api
 
 data class DashboardDisplayDefinition(
     val width: Int,

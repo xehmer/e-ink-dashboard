@@ -5,8 +5,8 @@ import de.schildbach.pte.dto.Departure
 import de.schildbach.pte.dto.Line
 import de.schildbach.pte.dto.LocationType
 import de.schildbach.pte.dto.Product
-import de.xehmer.dashboard.dashboard.DashboardContext
-import de.xehmer.dashboard.widgets.WidgetDataProvider
+import de.xehmer.dashboard.base.DashboardContext
+import de.xehmer.dashboard.base.WidgetDataProvider
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant

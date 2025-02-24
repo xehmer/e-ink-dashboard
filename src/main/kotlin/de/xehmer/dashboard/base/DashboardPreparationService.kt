@@ -1,8 +1,5 @@
-package de.xehmer.dashboard.dashboard
+package de.xehmer.dashboard.base
 
-import de.xehmer.dashboard.widgets.ErrorWidgetData
-import de.xehmer.dashboard.widgets.Widget
-import de.xehmer.dashboard.widgets.WidgetPreparationService
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toJavaInstant
 import org.springframework.stereotype.Service

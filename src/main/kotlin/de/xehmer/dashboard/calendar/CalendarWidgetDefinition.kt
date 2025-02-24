@@ -1,8 +1,8 @@
 package de.xehmer.dashboard.calendar
 
 import com.fasterxml.jackson.annotation.JsonTypeName
-import de.xehmer.dashboard.api.models.WidgetDefinition
-import de.xehmer.dashboard.api.models.WidgetDisplayDefinition
+import de.xehmer.dashboard.api.WidgetDefinition
+import de.xehmer.dashboard.api.WidgetDisplayDefinition
 
 @JsonTypeName("calendar")
 data class CalendarWidgetDefinition(

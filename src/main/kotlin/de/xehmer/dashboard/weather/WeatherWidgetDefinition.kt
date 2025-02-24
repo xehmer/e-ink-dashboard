@@ -1,8 +1,8 @@
 package de.xehmer.dashboard.weather
 
 import com.fasterxml.jackson.annotation.JsonTypeName
-import de.xehmer.dashboard.api.models.WidgetDefinition
-import de.xehmer.dashboard.api.models.WidgetDisplayDefinition
+import de.xehmer.dashboard.api.WidgetDefinition
+import de.xehmer.dashboard.api.WidgetDisplayDefinition
 
 @JsonTypeName("weather")
 data class WeatherWidgetDefinition(

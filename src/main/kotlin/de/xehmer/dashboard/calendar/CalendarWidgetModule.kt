@@ -1,13 +1,13 @@
 package de.xehmer.dashboard.calendar
 
-import de.xehmer.dashboard.api.SubtypeRegisteringAnnotationIntrospector
+import de.xehmer.dashboard.api.DashboardApiModule
 import org.springframework.context.annotation.Configuration
 import org.springframework.modulith.ApplicationModule
 
-@ApplicationModule
+@ApplicationModule(id = "widget-calendar", allowedDependencies = ["base", "api"])
 @Configuration
-class CalendarWidgetModule(subtypeRegisteringAnnotationIntrospector: SubtypeRegisteringAnnotationIntrospector) {
+class CalendarWidgetModule(dashboardApiModule: DashboardApiModule) {
     init {
-        subtypeRegisteringAnnotationIntrospector.registerSubtype(CalendarWidgetDefinition::class)
+        dashboardApiModule.registerWidgetDefinition(CalendarWidgetDefinition::class)
     }
 }

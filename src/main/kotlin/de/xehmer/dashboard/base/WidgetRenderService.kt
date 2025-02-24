@@ -1,6 +1,6 @@
-package de.xehmer.dashboard.widgets
+package de.xehmer.dashboard.base
 
-import de.xehmer.dashboard.api.models.WidgetDefinition
+import de.xehmer.dashboard.api.WidgetDefinition
 import de.xehmer.dashboard.utils.KotlinUtils
 import kotlinx.html.HtmlBlockTag
 import org.springframework.stereotype.Service
