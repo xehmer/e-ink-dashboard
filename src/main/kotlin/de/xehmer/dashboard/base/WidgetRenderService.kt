@@ -3,8 +3,10 @@ package de.xehmer.dashboard.base
 import de.xehmer.dashboard.api.WidgetDefinition
 import de.xehmer.dashboard.utils.KotlinUtils
 import kotlinx.html.HtmlBlockTag
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
+@Order(0)
 fun interface WidgetRenderer<S : WidgetDefinition, D : Any> {
     fun render(widget: Widget<S, D>, target: HtmlBlockTag)
 }
