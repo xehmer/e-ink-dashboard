@@ -1,6 +1,7 @@
 package de.xehmer.dashboard.web
 
 import de.xehmer.dashboard.api.DashboardDefinition
+import de.xehmer.dashboard.core.dashboard.DashboardRenderer
 import de.xehmer.dashboard.persistence.DashboardDefinitionRepository
 import kotlinx.html.body
 import kotlinx.html.html
