@@ -62,6 +62,9 @@ dependencies {
         }
     }
 
+    // Google Calendar API
+    implementation("com.google.apis", "google-api-services-calendar", "v3-rev20250115-2.0.0")
+
     // non-implementation stuff
     annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
 
