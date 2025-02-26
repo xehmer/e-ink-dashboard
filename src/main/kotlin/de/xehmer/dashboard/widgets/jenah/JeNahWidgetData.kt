@@ -5,6 +5,7 @@ import de.schildbach.pte.dto.Departure
 import de.schildbach.pte.dto.Line
 import de.schildbach.pte.dto.LocationType
 import de.schildbach.pte.dto.Product
+import de.xehmer.dashboard.api.ApiModule
 import de.xehmer.dashboard.core.dashboard.DashboardContext
 import de.xehmer.dashboard.core.widget.WidgetDataProvider
 import kotlinx.datetime.LocalDateTime
@@ -40,7 +41,11 @@ data class JeNahWidgetData(
 private const val UNKNOWN = "unknown"
 
 @Service
-class JeNahWidgetDataProvider : WidgetDataProvider<JeNahWidgetDefinition, JeNahWidgetData> {
+class JeNahWidgetDataProvider(apiModule: ApiModule) : WidgetDataProvider<JeNahWidgetDefinition, JeNahWidgetData> {
+
+    init {
+        apiModule.registerWidgetDefinition(JeNahWidgetDefinition::class)
+    }
 
     override fun getData(widgetDefinition: JeNahWidgetDefinition, context: DashboardContext): JeNahWidgetData {
         val vmtProvider = VmtProvider(widgetDefinition.apiClient, widgetDefinition.apiAuthorization)

@@ -8,6 +8,7 @@ import com.google.api.services.calendar.CalendarScopes
 import com.google.api.services.calendar.model.EventDateTime
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.ServiceAccountCredentials
+import de.xehmer.dashboard.api.ApiModule
 import de.xehmer.dashboard.core.dashboard.DashboardContext
 import de.xehmer.dashboard.core.widget.WidgetDataProvider
 import de.xehmer.dashboard.widgets.calendar.CalendarWidgetData
@@ -21,7 +22,13 @@ import kotlinx.datetime.TimeZone as KotlinTimeZone
 import java.util.TimeZone as JavaTimeZone
 
 @Service
-class GoogleCalendarWidgetDataProvider : WidgetDataProvider<GoogleCalendarWidgetDefinition, CalendarWidgetData> {
+class GoogleCalendarWidgetDataProvider(apiModule: ApiModule) :
+    WidgetDataProvider<GoogleCalendarWidgetDefinition, CalendarWidgetData> {
+
+    init {
+        apiModule.registerWidgetDefinition(GoogleCalendarWidgetDefinition::class)
+    }
+
     private val jsonFactory = GsonFactory.getDefaultInstance()
     private val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
 

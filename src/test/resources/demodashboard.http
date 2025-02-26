@@ -17,9 +17,9 @@ Content-Type: application/json
         {
 			"widgetType": "weather",
 			"display": {
-				"startColumn": 8,
-				"columnSpan": 3,
-				"startRow": 2,
+				"startColumn": 1,
+				"columnSpan": 10,
+				"startRow": 4,
 				"rowSpan": 2,
 				"align": "center",
 				"justify": "center"
@@ -28,25 +28,34 @@ Content-Type: application/json
 			"lon": 11.56
 		},
 		{
-			"widgetType": "calendar",
+			"widgetType": "googlecalendar",
 			"display": {
-				"startColumn": 1,
-				"columnSpan": 1,
+				"startColumn": 6,
+				"columnSpan": 5,
 				"startRow": 1,
-				"rowSpan": 1
+				"rowSpan": 3
 			},
-			"calendarId": "test"
+            "serviceAccount": {
+                "project_id": "{{googlecalendar.serviceAccount.project_id}}",
+                "private_key_id": "{{googlecalendar.serviceAccount.private_key_id}}",
+                "private_key": "{{googlecalendar.serviceAccount.private_key}}",
+                "client_email": "{{googlecalendar.serviceAccount.client_email}}",
+                "client_id": "{{googlecalendar.serviceAccount.client_id}}",
+                "token_uri": "{{googlecalendar.serviceAccount.token_uri}}",
+                "universe_domain": "{{googlecalendar.serviceAccount.universe_domain}}"
+            },
+			"calendarId": "{{googlecalendar.calendarId}}"
 		},
 		{
 			"widgetType": "jenah",
 			"display": {
-				"startColumn": 2,
-				"columnSpan": 6,
+				"startColumn": 1,
+				"columnSpan": 5,
 				"startRow": 1,
 				"rowSpan": 3
 			},
-			"apiClient": "{{jenahApiClient}}",
-			"apiAuthorization": "{{jenahApiAuthorization}}",
+			"apiClient": "{{jenah.apiClient}}",
+			"apiAuthorization": "{{jenah.apiAuthorization}}",
 			"station": "Zeiss-Werk"
 		}
 	]

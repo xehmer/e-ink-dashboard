@@ -13,8 +13,6 @@ data class GoogleCalendarWidgetDefinition(
 ) : WidgetDefinition {
 
     data class ServiceAccountCredentialsDefinition(
-//        @JsonProperty(value = "type")
-//        val type: String,
         @JsonProperty(value = "project_id")
         val projectId: String,
         @JsonProperty(value = "private_key_id")
@@ -25,14 +23,8 @@ data class GoogleCalendarWidgetDefinition(
         val clientEmail: String,
         @JsonProperty(value = "client_id")
         val clientId: String,
-//        @JsonProperty(value = "auth_uri")
-//        val authUri: String,
         @JsonProperty(value = "token_uri")
         val tokenUri: String,
-//        @JsonProperty(value = "auth_provider_x509_cert_url")
-//        val authProviderX509CertUrl: String,
-//        @JsonProperty(value = "client_x509_cert_url")
-//        val clientX509CertUrl: String,
         @JsonProperty(value = "universe_domain")
         val universeDomain: String,
     )
