@@ -12,14 +12,11 @@ import de.xehmer.dashboard.api.ApiModule
 import de.xehmer.dashboard.core.dashboard.DashboardContext
 import de.xehmer.dashboard.core.widget.WidgetDataProvider
 import de.xehmer.dashboard.widgets.calendar.CalendarWidgetData
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
 import org.springframework.stereotype.Service
 import java.net.URI
-import java.util.*
+import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.TimeZone as KotlinTimeZone
-import java.util.TimeZone as JavaTimeZone
 
 @Service
 class GoogleCalendarWidgetDataProvider(apiModule: ApiModule) :
@@ -57,11 +54,12 @@ class GoogleCalendarWidgetDataProvider(apiModule: ApiModule) :
             .setApplicationName("E-Ink Dashboard")
             .build()
 
-        val javaTimeZone = JavaTimeZone.getTimeZone(context.timezone.id)
-        val now = DateTime(Date(), javaTimeZone)
+        val now = DateTime(Clock.System.now().toEpochMilliseconds())
+        val inTwoDays = DateTime(Clock.System.now().plus(2.days).toEpochMilliseconds())
         val events = calendar.events().list(widgetDefinition.calendarId).apply {
-            maxResults = 20
             timeMin = now
+            timeMax = inTwoDays
+            maxResults = 20
             orderBy = "startTime"
             singleEvents = true
         }.execute()
@@ -69,9 +67,10 @@ class GoogleCalendarWidgetDataProvider(apiModule: ApiModule) :
         return events.items.map { event ->
             CalendarWidgetData.CalendarEvent(
                 title = event.summary.orEmpty(),
-                start = event.start.convertToLocalDateTime(context.timezone),
-                end = event.end.convertToLocalDateTime(context.timezone),
-                allDay = event.start.date != null,
+                startDate = event.start.extractDate(context.timezone),
+                startTime = event.start.extractTime(context.timezone),
+                endDate = event.end.extractDate(context.timezone),
+                endTime = event.end.extractTime(context.timezone),
                 location = event.location.orEmpty()
             )
         }
@@ -79,8 +78,13 @@ class GoogleCalendarWidgetDataProvider(apiModule: ApiModule) :
 
 }
 
-private fun EventDateTime?.convertToLocalDateTime(timeZone: KotlinTimeZone): LocalDateTime {
+private fun EventDateTime?.extractDate(timezone: KotlinTimeZone): LocalDate {
     val timestamp = this?.dateTime?.value ?: this?.date?.value
     require(timestamp != null) { "Could not convert date time $this" }
-    return Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(timeZone)
+    return Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(timezone).date
+}
+
+private fun EventDateTime?.extractTime(timezone: KotlinTimeZone): LocalTime? {
+    val timestamp = this?.dateTime?.value ?: return null
+    return Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(timezone).time
 }
