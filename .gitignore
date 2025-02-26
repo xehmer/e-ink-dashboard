@@ -27,3 +27,4 @@ dashboard-definition.json
 
 ### Credentials ###
 **/*.private.env.json
+**/resources/secret/**
