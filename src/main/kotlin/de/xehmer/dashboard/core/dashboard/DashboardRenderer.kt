@@ -67,7 +67,7 @@ class DashboardRenderer(
                                 displayDefinition.justify?.let { justifySelf = JustifySelf.valueOf(it) }
                             }
 
-                            widgetRenderService.renderWidget(widget, this)
+                            widgetRenderService.renderWidget(widget, dashboard.context, this)
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 package de.xehmer.dashboard.core.widget.internal
 
 import de.xehmer.dashboard.api.WidgetDefinition
+import de.xehmer.dashboard.core.dashboard.DashboardContext
 import de.xehmer.dashboard.core.widget.Widget
 import de.xehmer.dashboard.core.widget.WidgetRenderer
 import de.xehmer.dashboard.utils.inlineStyle
@@ -21,6 +22,7 @@ class ErrorWidgetData(val errorMessage: String) {
 class ErrorWidgetRenderer : WidgetRenderer<WidgetDefinition, ErrorWidgetData> {
     override fun render(
         widget: Widget<WidgetDefinition, ErrorWidgetData>,
+        context: DashboardContext,
         target: HtmlBlockTag
     ) = with(target) {
         div {
@@ -40,7 +42,11 @@ class ErrorWidgetRenderer : WidgetRenderer<WidgetDefinition, ErrorWidgetData> {
 @Service
 @Order(Ordered.LOWEST_PRECEDENCE)
 class FallbackWidgetRenderer : WidgetRenderer<WidgetDefinition, Any> {
-    override fun render(widget: Widget<WidgetDefinition, Any>, target: HtmlBlockTag) = with(target) {
+    override fun render(
+        widget: Widget<WidgetDefinition, Any>,
+        context: DashboardContext,
+        target: HtmlBlockTag
+    ) = with(target) {
         div {
             classes = setOf("widget-unknown")
             inlineStyle {

@@ -1,5 +1,6 @@
 package de.xehmer.dashboard.widgets.jenah
 
+import de.xehmer.dashboard.core.dashboard.DashboardContext
 import de.xehmer.dashboard.core.widget.Widget
 import de.xehmer.dashboard.core.widget.WidgetRenderer
 import kotlinx.html.*
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service
 class JeNahWidgetRenderer : WidgetRenderer<JeNahWidgetDefinition, JeNahWidgetData> {
     override fun render(
         widget: Widget<JeNahWidgetDefinition, JeNahWidgetData>,
+        context: DashboardContext,
         target: HtmlBlockTag
     ) = with(target) {
         div {
