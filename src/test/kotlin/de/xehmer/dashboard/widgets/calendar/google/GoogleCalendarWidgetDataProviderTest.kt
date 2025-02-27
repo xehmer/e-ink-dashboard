@@ -12,13 +12,19 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.springframework.mock.env.MockEnvironment
 import java.util.*
 
 @Tag("integration")
 class GoogleCalendarWidgetDataProviderTest {
 
-    private val uut = GoogleCalendarWidgetDataProvider(Mockito.mock(ApiModule::class.java))
-    private val om = ObjectMapper().registerModules(KotlinModule.Builder().build())
+    private val uut = GoogleCalendarWidgetDataProvider(
+        Mockito.mock(ApiModule::class.java),
+        MockEnvironment().withProperty("spring.application.name", "e-ink-dashboard")
+    )
+
+    private val om = ObjectMapper()
+        .registerModules(KotlinModule.Builder().build())
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
     @Test
@@ -31,17 +37,17 @@ class GoogleCalendarWidgetDataProviderTest {
         val privateHttpClientEnv = om.readTree(privateHttpClientEnvJson)
         val calendarId = privateHttpClientEnv.get("dev")?.get("googlecalendar")?.get("calendarId")?.asText() ?: return
 
-        val result = uut.getCalendarEvents(
-            widgetDefinition = GoogleCalendarWidgetDefinition(
-                display = WidgetDisplayDefinition(0, 0, 0, 0),
-                serviceAccount = serviceAccountDefinition,
-                calendarId = calendarId
-            ),
-            context = DashboardContext(
-                timezone = TimeZone.of("Europe/Berlin"),
-                locale = Locale.GERMANY
-            )
+        val widgetDefinition = GoogleCalendarWidgetDefinition(
+            display = WidgetDisplayDefinition(0, 0, 0, 0),
+            serviceAccount = serviceAccountDefinition,
+            calendarId = calendarId
         )
+        val context = DashboardContext(
+            timezone = TimeZone.of("Europe/Berlin"),
+            locale = Locale.GERMANY
+        )
+
+        val result = uut.getData(widgetDefinition, context)
 
         assertThat(result).isNotNull()
     }
