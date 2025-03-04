@@ -44,7 +44,9 @@ Content-Type: application/json
                 "token_uri": "{{googlecalendar.serviceAccount.token_uri}}",
                 "universe_domain": "{{googlecalendar.serviceAccount.universe_domain}}"
             },
-			"calendarId": "{{googlecalendar.calendarId}}"
+			"calendarId": "{{googlecalendar.calendarId}}",
+			"maxResults": 20,
+			"dateMax": 31
 		},
 		{
 			"widgetType": "jenah",

@@ -2,15 +2,17 @@ package de.xehmer.dashboard.widgets.calendar.google
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonTypeName
-import de.xehmer.dashboard.api.WidgetDefinition
 import de.xehmer.dashboard.api.WidgetDisplayDefinition
+import de.xehmer.dashboard.widgets.calendar.BaseCalendarWidgetDefinition
 
 @JsonTypeName("googlecalendar")
 data class GoogleCalendarWidgetDefinition(
     override val display: WidgetDisplayDefinition,
     val serviceAccount: ServiceAccountCredentialsDefinition,
     val calendarId: String,
-) : WidgetDefinition {
+    override val maxResults: Int,
+    override val dateMax: Int,
+) : BaseCalendarWidgetDefinition {
 
     data class ServiceAccountCredentialsDefinition(
         @JsonProperty(value = "project_id")

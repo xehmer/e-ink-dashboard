@@ -43,12 +43,12 @@ class GoogleCalendarWidgetDataProvider(apiModule: ApiModule, environment: Enviro
             .build()
 
         val now = DateTime(Clock.System.now().toEpochMilliseconds())
-        val inTwoDays = DateTime(Clock.System.now().plus(2.days).toEpochMilliseconds())
+        val dateMax = DateTime(Clock.System.now().plus(widgetDefinition.dateMax.days).toEpochMilliseconds())
         val events = calendar.events().list(widgetDefinition.calendarId).apply {
             timeZone = context.timezone.id
             timeMin = now
-            timeMax = inTwoDays
-            maxResults = 20
+            timeMax = dateMax
+            maxResults = widgetDefinition.maxResults
             orderBy = "startTime"
             singleEvents = true
         }.execute()
