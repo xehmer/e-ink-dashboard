@@ -40,7 +40,9 @@ class GoogleCalendarWidgetDataProviderTest {
         val widgetDefinition = GoogleCalendarWidgetDefinition(
             display = WidgetDisplayDefinition(0, 0, 0, 0),
             serviceAccount = serviceAccountDefinition,
-            calendarId = calendarId
+            calendarId = calendarId,
+            maxEvents = 20,
+            maxDays = 31
         )
         val context = DashboardContext(
             timezone = TimeZone.of("Europe/Berlin"),

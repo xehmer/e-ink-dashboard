@@ -4,14 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonTypeName
 import de.xehmer.dashboard.api.WidgetDisplayDefinition
 import de.xehmer.dashboard.widgets.calendar.BaseCalendarWidgetDefinition
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
 
 @JsonTypeName("googlecalendar")
 data class GoogleCalendarWidgetDefinition(
     override val display: WidgetDisplayDefinition,
+    @field:Valid
     val serviceAccount: ServiceAccountCredentialsDefinition,
+    @field:NotBlank
     val calendarId: String,
-    override val maxResults: Int,
-    override val dateMax: Int,
+    override val maxEvents: Int,
+    override val maxDays: Int,
 ) : BaseCalendarWidgetDefinition {
 
     data class ServiceAccountCredentialsDefinition(

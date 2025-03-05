@@ -3,6 +3,7 @@ package de.xehmer.dashboard.web
 import de.xehmer.dashboard.api.DashboardDefinition
 import de.xehmer.dashboard.core.dashboard.DashboardRenderer
 import de.xehmer.dashboard.persistence.DashboardDefinitionRepository
+import jakarta.validation.Valid
 import kotlinx.html.body
 import kotlinx.html.html
 import kotlinx.html.stream.createHTML
@@ -30,7 +31,7 @@ class DashboardWebController(
 
     @PutMapping("/dashboard/definition", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun saveDashboardDefinition(@RequestBody dashboardDefinition: DashboardDefinition) {
+    fun saveDashboardDefinition(@RequestBody @Valid dashboardDefinition: DashboardDefinition) {
         dashboardDefinitionRepository.saveDashboardDefinition(dashboardDefinition)
     }
 }

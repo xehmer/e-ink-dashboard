@@ -45,8 +45,8 @@ Content-Type: application/json
                 "universe_domain": "{{googlecalendar.serviceAccount.universe_domain}}"
             },
 			"calendarId": "{{googlecalendar.calendarId}}",
-			"maxResults": 20,
-			"dateMax": 31
+			"maxEvents": 20,
+			"maxDays": 31
 		},
 		{
 			"widgetType": "jenah",
