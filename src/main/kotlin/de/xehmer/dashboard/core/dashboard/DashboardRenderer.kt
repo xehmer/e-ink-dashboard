@@ -7,11 +7,8 @@ import de.xehmer.dashboard.core.widget.internal.WidgetRenderService
 import de.xehmer.dashboard.utils.inlineStyle
 import de.xehmer.dashboard.utils.repeat
 import kotlinx.css.*
-import kotlinx.html.body
-import kotlinx.html.div
-import kotlinx.html.html
-import kotlinx.html.id
-import kotlinx.html.stream.createHTML
+import kotlinx.html.*
+import kotlinx.html.stream.appendHTML
 import org.springframework.stereotype.Service
 
 @Service
@@ -23,52 +20,70 @@ class DashboardRenderer(
     fun renderDashboard(dashboardDefinition: DashboardDefinition): String {
         val unpreparedDashboard = dashboardFactory.createDashboard(dashboardDefinition)
         val preparedDashboard = dashboardPreparationService.prepareDashboard(unpreparedDashboard)
-        return buildHTML(preparedDashboard)
+        return buildString {
+            appendLine("<!DOCTYPE html>")
+            appendHTML().html {
+                createHtmlContent(preparedDashboard)
+            }
+        }
     }
 
-    private fun buildHTML(dashboard: PreparedDashboard): String {
-        val dashboardDisplay = dashboard.display
-        return createHTML(prettyPrint = false).html {
+    private fun HTML.createHtmlContent(dashboard: PreparedDashboard) {
+        lang = dashboard.context.locale.language
+
+        inlineStyle {
+            fontSize = 16.px
+            fontFamily = "sans-serif"
+        }
+
+        head {
+            meta(charset = "utf-8")
+
+            style {
+                unsafe {
+                    raw(CssBuilder().apply {
+                        universal {
+                            margin = Margin(0.px)
+                            padding = Padding(0.pt)
+                        }
+                    }.toString())
+                }
+            }
+        }
+
+        body {
+            val dashboardDisplay = dashboard.display
             inlineStyle {
-                fontSize = 1.25.rem
-                fontFamily = "sans-serif"
+                width = dashboardDisplay.width.px
+                height = dashboardDisplay.height.px
             }
 
-            body {
+            div {
+                id = "grid-container"
                 inlineStyle {
-                    margin = Margin(0.pt)
-                    padding = Padding(0.pt)
-                    width = dashboardDisplay.width.px
-                    height = dashboardDisplay.height.px
+                    val outerMargin = 0.25.rem
+                    margin = Margin(outerMargin)
+                    width = 100.pct - outerMargin * 2
+                    height = 100.pct - outerMargin * 2
+                    display = Display.grid
+                    gridTemplateColumns = GridTemplateColumns.repeat(dashboardDisplay.columnCount, 1.fr)
+                    gridTemplateRows = GridTemplateRows.repeat(dashboardDisplay.rowCount, 1.fr)
+                    gap = outerMargin / 2
                 }
 
-                div {
-                    id = "grid-container"
-                    inlineStyle {
-                        margin = Margin(0.25.rem)
-                        width = 100.pct - 0.5.rem
-                        height = 100.pct - 0.5.rem
-                        display = Display.grid
-                        gridTemplateColumns = GridTemplateColumns.repeat(dashboardDisplay.columnCount, 1.fr)
-                        gridTemplateRows = GridTemplateRows.repeat(dashboardDisplay.rowCount, 1.fr)
-                        gap = 0.125.rem
-                    }
-
-                    for ((index, widget) in dashboard.widgets.withIndex()) {
-                        div {
-                            id = "grid-item-$index"
-                            inlineStyle {
-                                val displayDefinition = widget.definition.display
-                                gridColumn =
-                                    GridColumn("${displayDefinition.startColumn} / span ${displayDefinition.columnSpan}")
-                                gridRow = GridRow("${displayDefinition.startRow} / span ${displayDefinition.rowSpan}")
-                                overflow = Overflow.hidden
-                                displayDefinition.align?.let { alignSelf = Align.valueOf(it) }
-                                displayDefinition.justify?.let { justifySelf = JustifySelf.valueOf(it) }
-                            }
-
-                            widgetRenderService.renderWidget(widget, dashboard.context, this)
+                for ((index, widget) in dashboard.widgets.withIndex()) {
+                    div {
+                        id = "grid-item-$index"
+                        inlineStyle {
+                            val widgetDisplay = widget.definition.display
+                            gridColumn = GridColumn("${widgetDisplay.startColumn} / span ${widgetDisplay.columnSpan}")
+                            gridRow = GridRow("${widgetDisplay.startRow} / span ${widgetDisplay.rowSpan}")
+                            overflow = Overflow.hidden
+                            widgetDisplay.align?.let { alignSelf = Align.valueOf(it) }
+                            widgetDisplay.justify?.let { justifySelf = JustifySelf.valueOf(it) }
                         }
+
+                        widgetRenderService.renderWidget(widget, dashboard.context, this)
                     }
                 }
             }
