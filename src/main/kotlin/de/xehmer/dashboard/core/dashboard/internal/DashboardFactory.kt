@@ -12,7 +12,7 @@ class DashboardFactory {
     fun createDashboard(definition: DashboardDefinition): UnpreparedDashboard {
         val dashboardContext = DashboardContext(
             timezone = TimeZone.of(definition.context.timeZone),
-            locale = Locale.of(definition.context.locale)
+            locale = Locale.forLanguageTag(definition.context.locale)
         )
         return UnpreparedDashboard(
             display = definition.display,

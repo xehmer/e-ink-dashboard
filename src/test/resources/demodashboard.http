@@ -5,7 +5,7 @@ Content-Type: application/json
 {
 	"context": {
 		"timeZone": "Europe/Berlin",
-		"locale": "de_DE"
+		"locale": "de-DE"
 	},
 	"display": {
 		"width": 1000,
