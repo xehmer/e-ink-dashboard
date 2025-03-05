@@ -8,20 +8,17 @@ data class CalendarWidgetData(
 ) {
     sealed interface CalendarEvent {
         val title: String
-        val location: String?
     }
 
     data class AllDayCalendarEvent(
         override val title: String,
         val firstDate: LocalDate,
         val lastDate: LocalDate,
-        override val location: String?,
     ) : CalendarEvent
 
     data class TimedCalendarEvent(
         override val title: String,
         val start: LocalDateTime,
         val end: LocalDateTime,
-        override val location: String?,
     ) : CalendarEvent
 }

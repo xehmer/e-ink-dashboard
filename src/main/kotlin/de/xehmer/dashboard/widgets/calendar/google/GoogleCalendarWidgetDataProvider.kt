@@ -86,7 +86,6 @@ class GoogleCalendarWidgetDataProvider(apiModule: ApiModule, environment: Enviro
             title = event.summary,
             firstDate = event.start.date.toLocalDate(),
             lastDate = event.end.date.toLocalDate().minus(1, DateTimeUnit.DAY),
-            location = event.location,
         )
     }
 
@@ -95,7 +94,6 @@ class GoogleCalendarWidgetDataProvider(apiModule: ApiModule, environment: Enviro
             title = event.summary,
             start = event.start.dateTime.toLocalDateTime(context),
             end = event.end.dateTime.toLocalDateTime(context),
-            location = event.location,
         )
     }
 

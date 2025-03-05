@@ -3,6 +3,8 @@ package de.xehmer.dashboard.widgets.calendar
 import de.xehmer.dashboard.core.dashboard.DashboardContext
 import de.xehmer.dashboard.core.widget.Widget
 import de.xehmer.dashboard.core.widget.WidgetRenderer
+import de.xehmer.dashboard.utils.inlineStyle
+import kotlinx.css.*
 import kotlinx.datetime.*
 import kotlinx.html.*
 import org.springframework.stereotype.Service
@@ -18,26 +20,39 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         context: DashboardContext,
         target: HtmlBlockTag
     ) = with(target) {
+        val today = Clock.System.now().toLocalDateTime(context.timezone).date
+        val lastDateToRender = today.plus(widget.definition.maxDays, DateTimeUnit.DAY)
+
         div("widget-calendar") {
-            val today = Clock.System.now().toLocalDateTime(context.timezone).date
-            val daysToShow = mutableListOf(today)
-            for (i in 1..widget.definition.dateMax) {
-                daysToShow.add(today.plus(i, DateTimeUnit.DAY))
+            var dateToRender = today
+            while (dateToRender <= lastDateToRender) {
+                renderDate(dateToRender, widget.data.events, today, context.locale)
+                dateToRender = dateToRender.plus(1, DateTimeUnit.DAY)
             }
 
-            for (day in daysToShow) {
-                val wholeDayEvents = collectWholeDayEvents(widget.data.events, day)
-                val timedDayEvents = collectTimedDayEvents(widget.data.events, day)
-                if (wholeDayEvents.isNotEmpty() || timedDayEvents.isNotEmpty()) {
-                    section {
-                        renderDayHeadline(day, today, context.locale)
-                        if (wholeDayEvents.isNotEmpty()) {
-                            renderAllDayEvents(wholeDayEvents)
-                        }
-                        if (timedDayEvents.isNotEmpty()) {
-                            renderTimedEvents(timedDayEvents, context.locale)
-                        }
-                    }
+        }
+    }
+
+    private fun DIV.renderDate(
+        date: LocalDate,
+        calendarEvents: List<CalendarWidgetData.CalendarEvent>,
+        today: LocalDate,
+        locale: Locale
+    ) {
+        val wholeDayEvents = collectWholeDayEvents(calendarEvents, date)
+        val timedDayEvents = collectTimedDayEvents(calendarEvents, date)
+        if (wholeDayEvents.isNotEmpty() || timedDayEvents.isNotEmpty()) {
+            section {
+                inlineStyle {
+                    marginBottom = 0.75.rem
+                }
+
+                renderDayHeadline(date, today, locale)
+                if (wholeDayEvents.isNotEmpty()) {
+                    renderAllDayEvents(wholeDayEvents)
+                }
+                if (timedDayEvents.isNotEmpty()) {
+                    renderTimedEvents(timedDayEvents, locale)
                 }
             }
         }
@@ -63,23 +78,19 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         day: LocalDate
     ): List<TimedDayEvent> {
         val timedCalendarEvents = events.filterIsInstance<CalendarWidgetData.TimedCalendarEvent>()
-        // collect events starting and ending today
-        val timedDayEvents = timedCalendarEvents
+        val timedDayEvents: MutableList<TimedDayEvent> = timedCalendarEvents
             .filter { it.start.date == day && it.end.date == day }
-            .map(::TimedDayEvent)
+            .map(TimedDayEvent::FullyContainedTimedDayEvent)
             .toMutableList()
-        // add events only ending today (but that started on a prior day)
-        timedDayEvents += timedCalendarEvents.filter { it.start.date < day && it.end.date == day }
-            .map { TimedDayEvent(title = it.title, location = it.location, end = it.end.time) }
-        // add events only starting today (but that end on a later day)
         timedDayEvents += timedCalendarEvents.filter { it.start.date == day && it.end.date > day }
-            .map { TimedDayEvent(title = it.title, location = it.location, start = it.start.time) }
+            .map(TimedDayEvent::StartingTimedDayEvent)
+        timedDayEvents += timedCalendarEvents.filter { it.start.date < day && it.end.date == day }
+            .map(TimedDayEvent::EndingTimedDayEvent)
         return timedDayEvents
     }
 
     private fun HtmlBlockTag.renderDayHeadline(day: LocalDate, today: LocalDate, locale: Locale) {
         val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
-        val dateString = day.toJavaLocalDate().format(dateFormatter)
         val dayName = when (day) {
             today -> "Today"
             today.plus(1, DateTimeUnit.DAY) -> "Tomorrow"
@@ -87,15 +98,24 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         }
 
         h3 {
-            +"$dayName, $dateString"
+            inlineStyle {
+                fontSize = 1.1.rem
+                marginBottom = 0.4.rem
+            }
+            +"$dayName, ${dateFormatter.format(day)}"
         }
     }
 
     private fun HtmlBlockTag.renderAllDayEvents(events: List<WholeDayEvent>) {
         events.forEach { event ->
-            span("widget-calendar-event-allday-pill") {
-                text(event.title)
-                event.location?.let { location -> text(" ($location)") }
+            span {
+                inlineStyle {
+                    fontSize = 1.rem
+                    border = Border(1.px, BorderStyle.solid, Color.black)
+                    borderRadius = 0.25.rem
+                    padding = Padding(0.1.rem)
+                }
+                +event.title
             }
         }
     }
@@ -107,44 +127,66 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
             events.forEach { event ->
                 tr {
                     td {
-                        if (event.start == null) {
-                            text("bis ${event.end!!.toJavaLocalTime().format(timeFormatter)}")
-                        } else if (event.end == null) {
-                            text("seit ${event.start.toJavaLocalTime().format(timeFormatter)}")
-                        } else {
-                            val start = event.start.toJavaLocalTime().format(timeFormatter)
-                            val end = event.end.toJavaLocalTime().format(timeFormatter)
-                            text("$start - $end")
+                        when (event) {
+                            is TimedDayEvent.FullyContainedTimedDayEvent ->
+                                +"${timeFormatter.format(event.start)} - ${timeFormatter.format(event.end)}"
+
+                            is TimedDayEvent.EndingTimedDayEvent ->
+                                +"bis ${timeFormatter.format(event.end)}"
+
+                            is TimedDayEvent.StartingTimedDayEvent ->
+                                +"seit ${timeFormatter.format(event.start)}"
                         }
                     }
                     td {
-                        text(event.title)
-                        event.location?.let { location ->
-                            br()
-                            text(" ($location)")
-                        }
+                        +event.title
                     }
                 }
             }
         }
-
     }
 
-    private data class WholeDayEvent(val title: String, val location: String?) {
-        constructor(calendarEvent: CalendarWidgetData.CalendarEvent) : this(calendarEvent.title, calendarEvent.location)
+    private data class WholeDayEvent(val title: String) {
+        constructor(calendarEvent: CalendarWidgetData.CalendarEvent) : this(calendarEvent.title)
     }
 
-    private data class TimedDayEvent(
-        val title: String,
-        val location: String?,
-        val start: LocalTime? = null,
-        val end: LocalTime? = null
-    ) {
-        constructor(calendarEvent: CalendarWidgetData.TimedCalendarEvent) : this(
-            title = calendarEvent.title,
-            location = calendarEvent.location,
-            start = calendarEvent.start.time,
-            end = calendarEvent.end.time
-        )
+    private sealed interface TimedDayEvent {
+        val title: String
+
+        data class FullyContainedTimedDayEvent(
+            override val title: String,
+            val start: LocalTime,
+            val end: LocalTime
+        ) : TimedDayEvent {
+            constructor(calendarEvent: CalendarWidgetData.TimedCalendarEvent) : this(
+                title = calendarEvent.title,
+                start = calendarEvent.start.time,
+                end = calendarEvent.end.time
+            )
+        }
+
+        data class StartingTimedDayEvent(
+            override val title: String,
+            val start: LocalTime
+        ) : TimedDayEvent {
+            constructor(calendarEvent: CalendarWidgetData.TimedCalendarEvent) : this(
+                title = calendarEvent.title,
+                start = calendarEvent.start.time,
+            )
+        }
+
+        data class EndingTimedDayEvent(
+            override val title: String,
+            val end: LocalTime
+        ) : TimedDayEvent {
+            constructor(calendarEvent: CalendarWidgetData.TimedCalendarEvent) : this(
+                title = calendarEvent.title,
+                end = calendarEvent.end.time,
+            )
+        }
     }
 }
+
+private fun DateTimeFormatter.format(time: LocalTime): String = format(time.toJavaLocalTime())
+
+private fun DateTimeFormatter.format(date: LocalDate): String = format(date.toJavaLocalDate())
