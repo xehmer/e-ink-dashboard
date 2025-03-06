@@ -5,11 +5,9 @@ import de.xehmer.dashboard.core.dashboard.UnpreparedDashboard
 import de.xehmer.dashboard.core.widget.Widget
 import de.xehmer.dashboard.core.widget.internal.ErrorWidgetData
 import de.xehmer.dashboard.core.widget.internal.WidgetPreparationService
-import kotlinx.datetime.Clock
-import kotlinx.datetime.toJavaInstant
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.concurrent.StructuredTaskScope
-import kotlin.time.Duration.Companion.seconds
 
 @Service
 class DashboardPreparationService(
@@ -21,7 +19,7 @@ class DashboardPreparationService(
                 taskScope.fork { widgetPreparationService.prepareWidget(it, dashboard.context) }
             }
 
-            taskScope.joinUntil(Clock.System.now().plus(5.seconds).toJavaInstant())
+            taskScope.joinUntil(Instant.now().plusSeconds(10))
             taskScope.shutdown()
 
             val widgets = mutableListOf<Widget<*, *>>()

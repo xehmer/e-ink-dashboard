@@ -28,11 +28,11 @@ class JeNahWidgetRenderer : WidgetRenderer<JeNahWidgetDefinition, JeNahWidgetDat
                         tr {
                             td { +departure.line.displayString }
                             td { +departure.destination }
-                            td { +departure.plannedTime.time.toString() }
+                            td { +departure.plannedTime.toLocalTime().format(context.timeFormatter) }
                             td {
-                                +departure.predictedTime.time.toString()
-                                if (departure.delay.inWholeMinutes > 0) {
-                                    +" (+${departure.delay.inWholeMinutes})"
+                                +departure.predictedTime.toLocalTime().format(context.timeFormatter)
+                                if (departure.delay.toMinutes() > 0) {
+                                    +" (+${departure.delay.toMinutes()})"
                                 }
                             }
                         }

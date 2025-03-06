@@ -52,7 +52,6 @@ dependencies {
     // "official" Kotlin additions
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.12.0")
-    implementation("org.jetbrains.kotlinx", "kotlinx-datetime", "0.6.1")
     implementation("org.jetbrains.kotlin-wrappers", "kotlin-css", "2025.1.5")
 
     // additional stuff

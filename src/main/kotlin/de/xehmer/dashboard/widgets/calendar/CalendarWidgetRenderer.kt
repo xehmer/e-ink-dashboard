@@ -5,13 +5,11 @@ import de.xehmer.dashboard.core.widget.Widget
 import de.xehmer.dashboard.core.widget.WidgetRenderer
 import de.xehmer.dashboard.utils.inlineStyle
 import kotlinx.css.*
-import kotlinx.datetime.*
 import kotlinx.html.*
 import org.springframework.stereotype.Service
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.TextStyle
-import java.util.*
 
 @Service
 class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, CalendarWidgetData> {
@@ -20,14 +18,14 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         context: DashboardContext,
         target: HtmlBlockTag
     ) = with(target) {
-        val today = Clock.System.now().toLocalDateTime(context.timezone).date
-        val lastDateToRender = today.plus(widget.definition.maxDays, DateTimeUnit.DAY)
+        val today = LocalDate.now(context.timezone)
+        val lastDateToRender = today.plusDays(widget.definition.maxDays)
 
         div("widget-calendar") {
             var dateToRender = today
             while (dateToRender <= lastDateToRender) {
-                renderDate(dateToRender, widget.data.events, today, context.locale)
-                dateToRender = dateToRender.plus(1, DateTimeUnit.DAY)
+                renderDate(dateToRender, widget.data.events, today, context)
+                dateToRender = dateToRender.plusDays(1)
             }
 
         }
@@ -37,7 +35,7 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         date: LocalDate,
         calendarEvents: List<CalendarWidgetData.CalendarEvent>,
         today: LocalDate,
-        locale: Locale
+        context: DashboardContext,
     ) {
         val wholeDayEvents = collectWholeDayEvents(calendarEvents, date)
         val timedDayEvents = collectTimedDayEvents(calendarEvents, date)
@@ -47,12 +45,12 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
                     marginBottom = 0.75.rem
                 }
 
-                renderDayHeadline(date, today, locale)
+                renderDayHeadline(date, today, context)
                 if (wholeDayEvents.isNotEmpty()) {
                     renderAllDayEvents(wholeDayEvents)
                 }
                 if (timedDayEvents.isNotEmpty()) {
-                    renderTimedEvents(timedDayEvents, locale)
+                    renderTimedEvents(timedDayEvents, context)
                 }
             }
         }
@@ -68,7 +66,7 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
             .toMutableList()
         wholeDayEvents += events
             .filterIsInstance<CalendarWidgetData.TimedCalendarEvent>()
-            .filter { it.start.date < day && it.end.date > day }
+            .filter { it.start.toLocalDate() < day && it.end.toLocalDate() > day }
             .map(::WholeDayEvent)
         return wholeDayEvents
     }
@@ -79,22 +77,21 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
     ): List<TimedDayEvent> {
         val timedCalendarEvents = events.filterIsInstance<CalendarWidgetData.TimedCalendarEvent>()
         val timedDayEvents: MutableList<TimedDayEvent> = timedCalendarEvents
-            .filter { it.start.date == day && it.end.date == day }
+            .filter { it.start.toLocalDate() == day && it.end.toLocalDate() == day }
             .map(TimedDayEvent::FullyContainedTimedDayEvent)
             .toMutableList()
-        timedDayEvents += timedCalendarEvents.filter { it.start.date == day && it.end.date > day }
+        timedDayEvents += timedCalendarEvents.filter { it.start.toLocalDate() == day && it.end.toLocalDate() > day }
             .map(TimedDayEvent::StartingTimedDayEvent)
-        timedDayEvents += timedCalendarEvents.filter { it.start.date < day && it.end.date == day }
+        timedDayEvents += timedCalendarEvents.filter { it.start.toLocalDate() < day && it.end.toLocalDate() == day }
             .map(TimedDayEvent::EndingTimedDayEvent)
         return timedDayEvents
     }
 
-    private fun HtmlBlockTag.renderDayHeadline(day: LocalDate, today: LocalDate, locale: Locale) {
-        val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
+    private fun HtmlBlockTag.renderDayHeadline(day: LocalDate, today: LocalDate, context: DashboardContext) {
         val dayName = when (day) {
             today -> "Today"
-            today.plus(1, DateTimeUnit.DAY) -> "Tomorrow"
-            else -> day.dayOfWeek.getDisplayName(TextStyle.FULL_STANDALONE, locale)
+            today.plusDays(1) -> "Tomorrow"
+            else -> day.dayOfWeek.getDisplayName(TextStyle.FULL_STANDALONE, context.locale)
         }
 
         h3 {
@@ -102,7 +99,7 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
                 fontSize = 1.1.rem
                 marginBottom = 0.4.rem
             }
-            +"$dayName, ${dateFormatter.format(day)}"
+            +"$dayName, ${context.dateFormatter.format(day)}"
         }
     }
 
@@ -120,22 +117,21 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         }
     }
 
-    private fun HtmlBlockTag.renderTimedEvents(events: List<TimedDayEvent>, locale: Locale) {
-        val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
-
+    private fun HtmlBlockTag.renderTimedEvents(events: List<TimedDayEvent>, context: DashboardContext) {
         table {
             events.forEach { event ->
                 tr {
                     td {
+                        val formatter = context.timeFormatter
                         when (event) {
                             is TimedDayEvent.FullyContainedTimedDayEvent ->
-                                +"${timeFormatter.format(event.start)} - ${timeFormatter.format(event.end)}"
+                                +"${formatter.format(event.start)} - ${formatter.format(event.end)}"
 
                             is TimedDayEvent.EndingTimedDayEvent ->
-                                +"bis ${timeFormatter.format(event.end)}"
+                                +"bis ${formatter.format(event.end)}"
 
                             is TimedDayEvent.StartingTimedDayEvent ->
-                                +"seit ${timeFormatter.format(event.start)}"
+                                +"seit ${formatter.format(event.start)}"
                         }
                     }
                     td {
@@ -160,8 +156,8 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         ) : TimedDayEvent {
             constructor(calendarEvent: CalendarWidgetData.TimedCalendarEvent) : this(
                 title = calendarEvent.title,
-                start = calendarEvent.start.time,
-                end = calendarEvent.end.time
+                start = calendarEvent.start.toLocalTime(),
+                end = calendarEvent.end.toLocalTime()
             )
         }
 
@@ -171,7 +167,7 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         ) : TimedDayEvent {
             constructor(calendarEvent: CalendarWidgetData.TimedCalendarEvent) : this(
                 title = calendarEvent.title,
-                start = calendarEvent.start.time,
+                start = calendarEvent.start.toLocalTime(),
             )
         }
 
@@ -181,12 +177,8 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         ) : TimedDayEvent {
             constructor(calendarEvent: CalendarWidgetData.TimedCalendarEvent) : this(
                 title = calendarEvent.title,
-                end = calendarEvent.end.time,
+                end = calendarEvent.end.toLocalTime(),
             )
         }
     }
 }
-
-private fun DateTimeFormatter.format(time: LocalTime): String = format(time.toJavaLocalTime())
-
-private fun DateTimeFormatter.format(date: LocalDate): String = format(date.toJavaLocalDate())

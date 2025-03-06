@@ -8,5 +8,5 @@ interface BaseCalendarWidgetDefinition : WidgetDefinition {
     val maxEvents: Int
 
     @get:Min(1)
-    val maxDays: Int
+    val maxDays: Long
 }

@@ -8,13 +8,11 @@ import de.schildbach.pte.dto.Product
 import de.xehmer.dashboard.api.ApiModule
 import de.xehmer.dashboard.core.dashboard.DashboardContext
 import de.xehmer.dashboard.core.widget.WidgetDataProvider
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toKotlinInstant
-import kotlinx.datetime.toLocalDateTime
 import org.springframework.stereotype.Service
-import java.util.*
-import kotlin.time.Duration
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.Date
 
 data class JeNahWidgetData(
     val departures: List<Departure>
@@ -64,16 +62,16 @@ class JeNahWidgetDataProvider(apiModule: ApiModule) : WidgetDataProvider<JeNahWi
         return JeNahWidgetData(mappedDepartures)
     }
 
-    private fun createDeparture(pteDeparture: Departure, timeZone: TimeZone): JeNahWidgetData.Departure {
+    private fun createDeparture(pteDeparture: Departure, timeZone: ZoneId): JeNahWidgetData.Departure {
         val plannedTime = pteDeparture.nullSafePlannedTime()
         val predictedTime = pteDeparture.nullSafePredictedTime()
-        val delay = predictedTime.minus(plannedTime)
+        val delay = Duration.between(plannedTime, predictedTime)
 
         return JeNahWidgetData.Departure(
             line = createLine(pteDeparture.line),
             destination = pteDeparture.destination?.name ?: UNKNOWN,
-            plannedTime = plannedTime.toLocalDateTime(timeZone),
-            predictedTime = predictedTime.toLocalDateTime(timeZone),
+            plannedTime = LocalDateTime.ofInstant(plannedTime, timeZone),
+            predictedTime = LocalDateTime.ofInstant(predictedTime, timeZone),
             delay = delay
         )
     }
@@ -92,9 +90,7 @@ class JeNahWidgetDataProvider(apiModule: ApiModule) : WidgetDataProvider<JeNahWi
         else -> JeNahWidgetData.TransportType.UNKNOWN
     }
 
-    private fun Departure.nullSafePlannedTime() =
-        (this.plannedTime ?: this.predictedTime!!).toInstant().toKotlinInstant()
+    private fun Departure.nullSafePlannedTime() = (this.plannedTime ?: this.predictedTime!!).toInstant()
 
-    private fun Departure.nullSafePredictedTime() =
-        (this.predictedTime ?: this.plannedTime!!).toInstant().toKotlinInstant()
+    private fun Departure.nullSafePredictedTime() = (this.predictedTime ?: this.plannedTime!!).toInstant()
 }

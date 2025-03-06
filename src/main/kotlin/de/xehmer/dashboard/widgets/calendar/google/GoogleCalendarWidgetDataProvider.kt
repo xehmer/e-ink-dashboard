@@ -12,11 +12,14 @@ import de.xehmer.dashboard.api.ApiModule
 import de.xehmer.dashboard.core.dashboard.DashboardContext
 import de.xehmer.dashboard.core.widget.WidgetDataProvider
 import de.xehmer.dashboard.widgets.calendar.CalendarWidgetData
-import kotlinx.datetime.*
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.net.URI
-import kotlin.time.Duration.Companion.days
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Service
 class GoogleCalendarWidgetDataProvider(apiModule: ApiModule, environment: Environment) :
@@ -42,12 +45,13 @@ class GoogleCalendarWidgetDataProvider(apiModule: ApiModule, environment: Enviro
             .setApplicationName(applicationName)
             .build()
 
-        val now = DateTime(Clock.System.now().toEpochMilliseconds())
-        val dateMax = DateTime(Clock.System.now().plus((widgetDefinition.maxDays - 1).days).toEpochMilliseconds())
+        val nowDateTime = DateTime(Instant.now().toEpochMilli())
+        val endInstant = Instant.now().plus(widgetDefinition.maxDays - 1, ChronoUnit.DAYS)
+        val endDateTime = DateTime(endInstant.toEpochMilli())
         val events = calendar.events().list(widgetDefinition.calendarId).apply {
             timeZone = context.timezone.id
-            timeMin = now
-            timeMax = dateMax
+            timeMin = nowDateTime
+            timeMax = endDateTime
             maxResults = widgetDefinition.maxEvents
             orderBy = "startTime"
             singleEvents = true
@@ -85,7 +89,7 @@ class GoogleCalendarWidgetDataProvider(apiModule: ApiModule, environment: Enviro
         return CalendarWidgetData.AllDayCalendarEvent(
             title = event.summary,
             firstDate = event.start.date.toLocalDate(),
-            lastDate = event.end.date.toLocalDate().minus(1, DateTimeUnit.DAY),
+            lastDate = event.end.date.toLocalDate().minusDays(1L)
         )
     }
 
@@ -97,11 +101,9 @@ class GoogleCalendarWidgetDataProvider(apiModule: ApiModule, environment: Enviro
         )
     }
 
-    private fun DateTime.toLocalDate(): LocalDate {
-        return LocalDate.parse(this.toStringRfc3339(), LocalDate.Formats.ISO)
-    }
+    private fun DateTime.toLocalDate(): LocalDate =
+        LocalDate.parse(this.toStringRfc3339(), DateTimeFormatter.ISO_LOCAL_DATE)
 
-    private fun DateTime.toLocalDateTime(context: DashboardContext): LocalDateTime {
-        return Instant.fromEpochMilliseconds(this.value).toLocalDateTime(context.timezone)
-    }
+    private fun DateTime.toLocalDateTime(context: DashboardContext): LocalDateTime =
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(this.value), context.timezone)
 }

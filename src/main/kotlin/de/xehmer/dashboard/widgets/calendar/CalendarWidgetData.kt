@@ -1,7 +1,7 @@
 package de.xehmer.dashboard.widgets.calendar
 
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class CalendarWidgetData(
     val events: List<CalendarEvent>

@@ -15,7 +15,7 @@ data class GoogleCalendarWidgetDefinition(
     @field:NotBlank
     val calendarId: String,
     override val maxEvents: Int,
-    override val maxDays: Int,
+    override val maxDays: Long,
 ) : BaseCalendarWidgetDefinition {
 
     data class ServiceAccountCredentialsDefinition(

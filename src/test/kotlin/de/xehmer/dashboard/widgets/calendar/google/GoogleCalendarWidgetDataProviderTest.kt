@@ -7,13 +7,13 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import de.xehmer.dashboard.api.ApiModule
 import de.xehmer.dashboard.api.WidgetDisplayDefinition
 import de.xehmer.dashboard.core.dashboard.DashboardContext
-import kotlinx.datetime.TimeZone
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.mock.env.MockEnvironment
-import java.util.*
+import java.time.ZoneId
+import java.util.Locale
 
 @Tag("integration")
 class GoogleCalendarWidgetDataProviderTest {
@@ -45,8 +45,8 @@ class GoogleCalendarWidgetDataProviderTest {
             maxDays = 31
         )
         val context = DashboardContext(
-            timezone = TimeZone.of("Europe/Berlin"),
-            locale = Locale.GERMANY
+            timezone = ZoneId.of("Europe/Berlin"),
+            locale = Locale.GERMANY,
         )
 
         val result = uut.getData(widgetDefinition, context)
