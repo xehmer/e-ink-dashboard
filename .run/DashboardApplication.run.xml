@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DashboardApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <option name="ACTIVE_PROFILES" value="mock-google" />
+    <module name="e-ink-dashboard.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="de.xehmer.dashboard.DashboardApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
