@@ -27,7 +27,6 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
                 renderDate(dateToRender, widget.data.events, today, context)
                 dateToRender = dateToRender.plusDays(1)
             }
-
         }
     }
 
@@ -76,21 +75,28 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
         day: LocalDate
     ): List<TimedDayEvent> {
         val timedCalendarEvents = events.filterIsInstance<CalendarWidgetData.TimedCalendarEvent>()
+
+        // collect events that start and end today (only future ends, as should be filtered by the data provider)
         val timedDayEvents: MutableList<TimedDayEvent> = timedCalendarEvents
             .filter { it.start.toLocalDate() == day && it.end.toLocalDate() == day }
             .map(TimedDayEvent::FullyContainedTimedDayEvent)
             .toMutableList()
+
+        // add events that start today and end at a later day
         timedDayEvents += timedCalendarEvents.filter { it.start.toLocalDate() == day && it.end.toLocalDate() > day }
             .map(TimedDayEvent::StartingTimedDayEvent)
+
+        // add events that started on an earlier date and end (later) today
         timedDayEvents += timedCalendarEvents.filter { it.start.toLocalDate() < day && it.end.toLocalDate() == day }
             .map(TimedDayEvent::EndingTimedDayEvent)
+
         return timedDayEvents
     }
 
     private fun HtmlBlockTag.renderDayHeadline(day: LocalDate, today: LocalDate, context: DashboardContext) {
         val dayName = when (day) {
-            today -> "Today"
-            today.plusDays(1) -> "Tomorrow"
+            today -> "Heute"
+            today.plusDays(1) -> "Morgen"
             else -> day.dayOfWeek.getDisplayName(TextStyle.FULL_STANDALONE, context.locale)
         }
 
@@ -119,7 +125,13 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
 
     private fun HtmlBlockTag.renderTimedEvents(events: List<TimedDayEvent>, context: DashboardContext) {
         table {
-            events.forEach { event ->
+            events.sortedBy {
+                when (it) {
+                    is TimedDayEvent.FullyContainedTimedDayEvent -> it.start
+                    is TimedDayEvent.StartingTimedDayEvent -> it.start
+                    is TimedDayEvent.EndingTimedDayEvent -> it.end
+                }
+            }.forEach { event ->
                 tr {
                     td {
                         val formatter = context.timeFormatter
@@ -130,8 +142,10 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
                             is TimedDayEvent.EndingTimedDayEvent ->
                                 +"bis ${formatter.format(event.end)}"
 
-                            is TimedDayEvent.StartingTimedDayEvent ->
-                                +"seit ${formatter.format(event.start)}"
+                            is TimedDayEvent.StartingTimedDayEvent -> {
+                                val adverb = if (LocalTime.now(context.timezone).isBefore(event.start)) "ab" else "seit"
+                                +"$adverb ${formatter.format(event.start)}"
+                            }
                         }
                     }
                     td {
