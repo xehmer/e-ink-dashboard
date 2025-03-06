@@ -124,6 +124,9 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
     }
 
     private fun HtmlBlockTag.renderTimedEvents(events: List<TimedDayEvent>, context: DashboardContext) {
+        val formatter = context.timeFormatter
+        val now = LocalTime.now(context.timezone)
+
         table {
             events.sortedBy {
                 when (it) {
@@ -134,7 +137,6 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
             }.forEach { event ->
                 tr {
                     td {
-                        val formatter = context.timeFormatter
                         when (event) {
                             is TimedDayEvent.FullyContainedTimedDayEvent ->
                                 +"${formatter.format(event.start)} - ${formatter.format(event.end)}"
@@ -143,7 +145,7 @@ class CalendarWidgetRenderer : WidgetRenderer<BaseCalendarWidgetDefinition, Cale
                                 +"bis ${formatter.format(event.end)}"
 
                             is TimedDayEvent.StartingTimedDayEvent -> {
-                                val adverb = if (LocalTime.now(context.timezone).isBefore(event.start)) "ab" else "seit"
+                                val adverb = if (event.start.isBefore(now)) "seit" else "ab"
                                 +"$adverb ${formatter.format(event.start)}"
                             }
                         }
